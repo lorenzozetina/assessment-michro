@@ -266,14 +266,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);lin
 <div class="lead-card">
 <h2>¡Tu diagnóstico está listo!</h2>
 <p>Ingresa tus datos para ver tu radar de madurez y roadmap personalizado.</p>
-<div class="lead-form">
-<input type="text" id="leadName" placeholder="Tu nombre">
-<input type="text" id="leadCompany" placeholder="Nombre de tu empresa">
-<input type="email" id="leadEmail" placeholder="Tu correo electrónico">
-<input type="tel" id="leadPhone" placeholder="Teléfono (opcional)">
-<button class="btn btn-primary" onclick="showResults()" style="width:100%;margin-top:4px">Ver mi diagnóstico</button>
-<p style="font-size:10px;color:var(--text3);margin-top:4px">Tus datos están seguros. No spam, no compartimos tu información.</p>
-</div>
+<div id="hubspotFormContainer" style="max-width:420px;margin:0 auto;text-align:left;"></div>
+<p style="font-size:10px;color:var(--text3);margin-top:12px;text-align:center">Tus datos están seguros. No spam, no compartimos tu información.</p>
 </div>
 </div>
 
@@ -569,15 +563,39 @@ function showLead() {
   document.getElementById('progressBar').classList.add('hidden');
   document.getElementById('leadSection').style.display = 'block';
   window.scrollTo({top:0,behavior:'smooth'});
+  loadHubSpotForm();
 }
 
 // ─── RESULTS ───
-function showResults() {
-  const name = document.getElementById('leadName').value || 'Tu empresa';
-  const company = document.getElementById('leadCompany').value || '';
-  document.getElementById('leadSection').style.display = 'none';
-  document.getElementById('resultsSection').style.display = 'block';
-  setStep(3);
+async function sendToHubSpot(name, email, company, phone, overall, pillarScores) {
+  try {
+    const PORTAL_ID = '46526725';
+    const FORM_ID = 'faf191f4-d3ea-4889-9aca-c6f7d7bff169';
+    const url = `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_ID}`;
+    const pillarNames = ['Atracción y Onboarding','Desempeño y Desarrollo','Engagement y Retención','HRIS & Analytics'];
+    const payload = {
+      fields: [
+        { name: 'firstname', value: name },
+        { name: 'email', value: email },
+        { name: 'company', value: company },
+        { name: 'phone', value: phone || '' },
+        { name: 'message', value: pillarNames.map((p,i) => `${p}: ${pillarScores[i]}%`).join(' | ') + ` | Score general: ${overall}%` },
+      ],
+      context: { pageUri: window.location.href, pageName: 'Assessment Express Mi-CHRO' },
+      legalConsentOptions: { consent: { consentToProcess: true, text: 'Acepto recibir comunicaciones de Mi-CHRO.' } }
+    };
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) { console.log('HubSpot:', e); }
+}
+
+function showResults() { renderResults(); }
+function renderResults(name, company) {
+  name = name || 'Tu empresa';
+  company = company || '';
   document.getElementById('resultsFor').textContent = company ? `Resultados para ${company}` : `Resultados para ${name}`;
 
   // Profile result summary
@@ -597,6 +615,7 @@ function showResults() {
   });
   const pPcts = pScores.map((s, i) => pCounts[i] > 0 ? Math.round((s / (pCounts[i] * 2)) * 100) : 0);
   const overall = Math.round(pPcts.reduce((a,b) => a+b, 0) / 5);
+  sendToHubSpot(name, email, company, phone, overall, pPcts);
 
   // Badge
   const badge = document.getElementById('scoreBadge');
@@ -753,6 +772,37 @@ function generateRoadmap(pcts) {
     </div>`;
   });
   el.innerHTML = html;
+}
+</script>
+<script src="https://js.hsforms.net/forms/embed/46526725.js" defer></script>
+<script>
+function loadHubSpotForm() {
+  if(window.hbspt) {
+    hbspt.forms.create({
+      region: "na1",
+      portalId: "46526725",
+      formId: "faf191f4-d3ea-4889-9aca-c6f7d7bff169",
+      target: "#hubspotFormContainer",
+      onFormSubmit: function($form) {
+        const nameField = $form.find('input[name="firstname"]').val() || '';
+        const companyField = $form.find('input[name="company"]').val() || '';
+        document.getElementById('leadSection').style.display = 'none';
+        document.getElementById('resultsSection').style.display = 'block';
+        setStep(3);
+        window._leadName = nameField;
+        window._leadCompany = companyField;
+        renderResults(nameField, companyField);
+      },
+      onFormReady: function($form) {
+        setTimeout(function() {
+          var btn = document.querySelector('#hubspotFormContainer input[type="submit"], #hubspotFormContainer button[type="submit"]');
+          if(btn) { btn.value = 'Ver mi diagnóstico'; btn.textContent = 'Ver mi diagnóstico'; }
+        }, 500);
+      }
+    });
+  } else {
+    setTimeout(loadHubSpotForm, 300);
+  }
 }
 </script>
 </body>
