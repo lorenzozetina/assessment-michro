@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi-CHRO — Assessment Express</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#FAFAF8;--surface:#FFF;--surface2:#F3F2EE;--text:#1A1A18;--text2:#6B6A65;--text3:#9C9B96;--accent:#1D9E75;--accent-lt:#E1F5EE;--accent2:#534AB7;--border:#E5E4E0;--p1:#1D9E75;--p1b:#E1F5EE;--p2:#EF9F27;--p2b:#FAEEDA;--p3:#534AB7;--p3b:#EEEDFE;--p4:#D85A30;--p4b:#FAECE7;--p5:#185FA5;--p5b:#E6F1FB;--danger:#E24B4A;--danger-bg:#FCEBEB;--warn:#EF9F27;--warn-bg:#FAEEDA;--ok:#1D9E75;--ok-bg:#E1F5EE;--r:12px;--rs:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.container{max-width:680px;margin:0 auto;padding:0 20px}
+.hidden{display:none!important}
+
+/* HERO */
+.hero{text-align:center;padding:48px 20px 40px;background:linear-gradient(135deg,#085041 0%,#1A1A18 50%,#26215C 100%);color:#fff}
+.hero-logo{font-family:'Fraunces',serif;font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px}
+.hero-logo span{color:var(--accent)}
+.hero-sub{font-size:11px;text-transform:uppercase;letter-spacing:3px;color:rgba(255,255,255,.5);margin-bottom:24px}
+.hero h1{font-family:'Fraunces',serif;font-size:26px;font-weight:600;line-height:1.3;margin-bottom:12px}
+.hero p{font-size:14px;color:rgba(255,255,255,.7);max-width:480px;margin:0 auto 24px}
+.hero-stats{display:flex;justify-content:center;gap:32px;font-size:12px;color:rgba(255,255,255,.5)}
+.hero-stats strong{display:block;font-size:18px;color:#fff;font-weight:600}
+
+/* STEPPER */
+.stepper{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px;position:sticky;top:0;z-index:10}
+.stepper-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:0}
+.step{flex:1;text-align:center;font-size:11px;color:var(--text3);position:relative;padding-bottom:10px;font-weight:500}
+.step::after{content:'';position:absolute;bottom:0;left:10%;width:80%;height:3px;background:var(--border);border-radius:2px}
+.step.active{color:var(--accent)}
+.step.active::after{background:var(--accent)}
+.step.done{color:var(--accent)}
+.step.done::after{background:var(--accent)}
+
+/* PROFILE SECTION */
+.profile-section{padding:32px 0 40px}
+.profile-section h2{font-family:'Fraunces',serif;font-size:22px;font-weight:600;text-align:center;margin-bottom:4px}
+.profile-section>p{font-size:13px;color:var(--text2);text-align:center;margin-bottom:28px}
+.pf-group{margin-bottom:24px}
+.pf-label{font-size:13px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.pf-label .pf-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff}
+.pf-options{display:flex;flex-wrap:wrap;gap:8px}
+.pf-opt{font-size:12px;padding:8px 14px;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;transition:all .2s;user-select:none;background:var(--surface)}
+.pf-opt:hover{background:var(--surface2)}
+.pf-opt.selected{background:var(--accent-lt);border-color:var(--accent);color:var(--accent);font-weight:500}
+.pf-note{font-size:11px;color:var(--text3);margin-top:6px}
+
+/* CHALLENGES - special multi-select */
+.ch-opt{font-size:12px;padding:8px 14px;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;transition:all .2s;user-select:none;background:var(--surface);display:inline-flex;align-items:center;gap:6px}
+.ch-opt:hover{background:var(--surface2)}
+.ch-opt.selected{background:#EEEDFE;border-color:var(--accent2);color:var(--accent2);font-weight:500}
+.ch-opt.disabled{opacity:.4;cursor:not-allowed}
+.ch-count{font-size:10px;background:var(--accent2);color:#fff;width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center;font-weight:600}
+.ch-opt.selected .ch-count{display:flex}
+
+/* PROGRESS */
+.progress-wrap{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;position:sticky;top:44px;z-index:9}
+.progress-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.progress-bar{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s;width:0}
+.progress-text{font-size:11px;color:var(--text2);min-width:70px;text-align:right}
+
+/* PROFILE SUMMARY STRIP */
+.profile-strip{background:var(--surface2);border-radius:var(--rs);padding:10px 14px;margin-bottom:24px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:11px;color:var(--text2)}
+.ps-tag{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:10px}
+
+/* QUESTIONS */
+.form-section{padding:24px 0}
+.pillar-group{margin-bottom:28px}
+.pillar-label{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;padding:6px 14px;border-radius:20px;margin-bottom:14px}
+.pl-1{background:var(--p1b);color:var(--p1)}.pl-2{background:var(--p2b);color:var(--p2)}.pl-3{background:var(--p3b);color:var(--p3)}.pl-4{background:var(--p4b);color:var(--p4)}.pl-5{background:var(--p5b);color:var(--p5)}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:10px;transition:border-color .2s}
+.q-card.answered{border-color:var(--accent)}
+.q-num{font-size:10px;color:var(--text3);font-weight:500;margin-bottom:4px}
+.q-text{font-size:14px;font-weight:500;margin-bottom:12px;line-height:1.5}
+.q-options{display:flex;flex-direction:column;gap:6px}
+.q-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;font-size:12px;transition:all .2s;user-select:none}
+.q-opt:hover{background:var(--surface2)}
+.q-opt.selected{background:var(--accent-lt);border-color:var(--accent)}
+.q-opt .radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.q-opt.selected .radio{border-color:var(--accent);background:var(--accent)}
+.q-opt.selected .radio::after{content:'';width:5px;height:5px;background:#fff;border-radius:50%}
+.q-na{font-size:11px;color:var(--text3);font-style:italic;padding:10px 12px;background:var(--surface2);border-radius:var(--rs);text-align:center}
+
+/* BUTTONS */
+.cta-wrap{text-align:center;padding:20px 0 40px}
+.btn{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;border:none;padding:12px 32px;border-radius:var(--rs);cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#0F6E56;transform:translateY(-1px)}
+.btn-primary:disabled{background:var(--text3);cursor:not-allowed;transform:none}
+.btn-white{background:#fff;color:var(--text)}
+.btn-white:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-outline:hover{background:var(--surface2)}
+
+/* LEAD */
+.lead-section{display:none;padding:40px 0}
+.lead-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:32px 24px;text-align:center}
+.lead-card h2{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:8px}
+.lead-card p{font-size:13px;color:var(--text2);margin-bottom:24px}
+.lead-form{display:flex;flex-direction:column;gap:10px;max-width:360px;margin:0 auto}
+.lead-form input{font-family:'DM Sans',sans-serif;font-size:13px;padding:11px 14px;border:1px solid var(--border);border-radius:var(--rs);outline:none;transition:border-color .2s}
+.lead-form input:focus{border-color:var(--accent)}
+
+/* RESULTS */
+.results-section{display:none;padding:32px 0 48px}
+.results-header{text-align:center;margin-bottom:28px}
+.results-header h2{font-family:'Fraunces',serif;font-size:24px;font-weight:600;margin-bottom:4px}
+.results-header p{font-size:13px;color:var(--text2)}
+.score-badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:8px 18px;border-radius:20px;margin:12px 0 8px}
+.score-low{background:var(--danger-bg);color:var(--danger)}.score-mid{background:var(--warn-bg);color:var(--warn)}.score-high{background:var(--ok-bg);color:var(--ok)}
+.profile-result{background:var(--surface2);border-radius:var(--rs);padding:12px 16px;font-size:12px;color:var(--text2);margin-bottom:24px;text-align:center}
+.profile-result strong{color:var(--text)}
+.radar-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:20px}
+.radar-wrap h3{font-size:14px;font-weight:600;margin-bottom:14px;text-align:center}
+.radar-canvas{max-width:380px;margin:0 auto}
+.pillar-scores{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+.ps-row{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px}
+.ps-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ps-name{font-size:12px;font-weight:500;flex:1}
+.ps-bar-wrap{width:90px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.ps-bar{height:100%;border-radius:3px;transition:width .6s}
+.ps-val{font-size:12px;font-weight:600;min-width:32px;text-align:right}
+.ps-level{font-size:10px;padding:2px 7px;border-radius:4px;white-space:nowrap}
+
+/* ROADMAP */
+.roadmap{margin-bottom:28px}
+.roadmap h3{font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin-bottom:4px}
+.roadmap>p{font-size:12px;color:var(--text2);margin-bottom:14px}
+.rm-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:8px;border-left:3px solid var(--accent)}
+.rm-item.p-high{border-left-color:var(--danger)}.rm-item.p-med{border-left-color:var(--warn)}.rm-item.p-low{border-left-color:var(--ok)}
+.rm-header{display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap}
+.rm-pri{font-size:9px;font-weight:600;text-transform:uppercase;padding:2px 6px;border-radius:3px}
+.rm-pri.high{background:var(--danger-bg);color:var(--danger)}.rm-pri.med{background:var(--warn-bg);color:var(--warn)}.rm-pri.low{background:var(--ok-bg);color:var(--ok)}
+.rm-pillar{font-size:10px;color:var(--text3)}
+.rm-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.rm-desc{font-size:11px;color:var(--text2);line-height:1.5}
+.rm-challenge{display:inline-flex;align-items:center;gap:3px;font-size:9px;padding:2px 6px;border-radius:3px;background:#EEEDFE;color:var(--accent2);margin-top:4px}
+
+.cta-final{background:linear-gradient(135deg,#085041,#26215C);color:#fff;border-radius:var(--r);padding:28px 24px;text-align:center}
+.cta-final h3{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin-bottom:6px}
+.cta-final p{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:18px}
+.cta-final .compare{display:flex;gap:12px;justify-content:center;margin-bottom:18px;flex-wrap:wrap}
+.cta-final .compare div{background:rgba(255,255,255,.1);border-radius:var(--rs);padding:12px 16px;flex:1;min-width:140px}
+.cta-final .compare div strong{display:block;font-size:18px;margin-bottom:2px}
+.cta-final .compare div span{font-size:11px;color:rgba(255,255,255,.6)}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero" id="heroSection">
+<div class="hero-logo">Mi-<span>CHRO</span></div>
+<div class="hero-sub">People-Powered Success</div>
+<h1>¿Tu gestión de personas<br>impulsa o frena tu negocio?</h1>
+<p>Cuéntanos sobre tu empresa, responde 20 preguntas y descubre tu nivel de madurez en gestión estratégica de personas — con recomendaciones personalizadas.</p>
+<div class="hero-stats">
+<div><strong>~8</strong> minutos</div>
+<div><strong>5</strong> pilares evaluados</div>
+<div><strong>1</strong> roadmap personalizado</div>
+</div>
+<div style="margin-top:24px"><button class="btn btn-primary" onclick="goToProfile()">Comenzar diagnóstico express</button></div>
+</div>
+
+<!-- STEPPER -->
+<div class="stepper hidden" id="stepper">
+<div class="stepper-inner">
+<div class="step active" id="step1">1. Perfil</div>
+<div class="step" id="step2">2. Diagnóstico</div>
+<div class="step" id="step3">3. Resultados</div>
+</div>
+</div>
+
+<div class="container">
+
+<!-- STEP 1: PROFILE -->
+<div class="profile-section hidden" id="profileSection">
+<h2>Perfil de tu empresa</h2>
+<p>Esto nos permite personalizar el diagnóstico a tu realidad.</p>
+
+<div class="pf-group">
+<div class="pf-label"><span class="pf-icon" style="background:var(--p1)">1</span> Tamaño de la empresa</div>
+<div class="pf-options" id="pfSize">
+<div class="pf-opt" onclick="pfSelect('size',this,'1-49')">1-49 empleados</div>
+<div class="pf-opt" onclick="pfSelect('size',this,'50-99')">50-99 empleados</div>
+<div class="pf-opt" onclick="pfSelect('size',this,'100-299')">100-299 empleados</div>
+<div class="pf-opt" onclick="pfSelect('size',this,'300-500')">300-500 empleados</div>
+<div class="pf-opt" onclick="pfSelect('size',this,'500+')">500+ empleados</div>
+</div>
+</div>
+
+<div class="pf-group">
+<div class="pf-label"><span class="pf-icon" style="background:var(--p2)">2</span> Etapa de la empresa</div>
+<div class="pf-options" id="pfStage">
+<div class="pf-opt" onclick="pfSelect('stage',this,'startup')">Startup / nueva</div>
+<div class="pf-opt" onclick="pfSelect('stage',this,'growing')">En crecimiento</div>
+<div class="pf-opt" onclick="pfSelect('stage',this,'stable')">Estable / madura</div>
+<div class="pf-opt" onclick="pfSelect('stage',this,'restructuring')">En reestructuración</div>
+</div>
+</div>
+
+<div class="pf-group">
+<div class="pf-label"><span class="pf-icon" style="background:var(--p3)">3</span> Equipo de RH</div>
+<div class="pf-options" id="pfHR">
+<div class="pf-opt" onclick="pfSelect('hr',this,'none')">No tenemos a nadie dedicado</div>
+<div class="pf-opt" onclick="pfSelect('hr',this,'1')">1 persona (generalmente administrativo)</div>
+<div class="pf-opt" onclick="pfSelect('hr',this,'2-5')">2-5 personas</div>
+<div class="pf-opt" onclick="pfSelect('hr',this,'6+')">6+ personas</div>
+</div>
+</div>
+
+<div class="pf-group">
+<div class="pf-label"><span class="pf-icon" style="background:var(--p4)">4</span> Tus 2 retos principales con tu gente</div>
+<div class="pf-note">Selecciona exactamente 2 opciones</div>
+<div class="pf-options" id="pfChallenges" style="margin-top:8px">
+<div class="ch-opt" onclick="chToggle(this,0)"><span class="ch-count"></span>Nos cuesta atraer y contratar buen talento</div>
+<div class="ch-opt" onclick="chToggle(this,1)"><span class="ch-count"></span>La gente se nos va (rotación alta)</div>
+<div class="ch-opt" onclick="chToggle(this,2)"><span class="ch-count"></span>El equipo no está alineado con los resultados del negocio</div>
+<div class="ch-opt" onclick="chToggle(this,3)"><span class="ch-count"></span>No tenemos procesos de RH formalizados</div>
+<div class="ch-opt" onclick="chToggle(this,4)"><span class="ch-count"></span>Nuestros líderes y mandos no están preparados</div>
+<div class="ch-opt" onclick="chToggle(this,5)"><span class="ch-count"></span>No medimos nada de gestión de personas</div>
+<div class="ch-opt" onclick="chToggle(this,6)"><span class="ch-count"></span>La comunicación interna es deficiente</div>
+<div class="ch-opt" onclick="chToggle(this,7)"><span class="ch-count"></span>Estamos creciendo y RH no da abasto</div>
+<div class="ch-opt" onclick="chToggle(this,8)"><span class="ch-count"></span>Queremos cambiar la cultura pero no sabemos cómo</div>
+<div class="ch-opt" onclick="chToggle(this,9)"><span class="ch-count"></span>RH solo hace lo administrativo, no aporta estratégicamente</div>
+</div>
+</div>
+
+<div class="pf-group">
+<div class="pf-label"><span class="pf-icon" style="background:var(--p5)">5</span> ¿Quién contesta este diagnóstico?</div>
+<div class="pf-options" id="pfRole">
+<div class="pf-opt" onclick="pfSelect('role',this,'ceo')">CEO / Director General / Dueño</div>
+<div class="pf-opt" onclick="pfSelect('role',this,'hr')">Director / Gerente de RH</div>
+<div class="pf-opt" onclick="pfSelect('role',this,'ops')">Director de Operaciones / Finanzas</div>
+<div class="pf-opt" onclick="pfSelect('role',this,'other')">Otro rol directivo</div>
+</div>
+</div>
+
+<div class="cta-wrap">
+<button class="btn btn-primary" id="profileBtn" disabled onclick="goToQuestions()">Continuar al diagnóstico</button>
+<p style="font-size:11px;color:var(--text3);margin-top:6px" id="profileMsg">Completa todas las secciones para continuar</p>
+</div>
+</div>
+
+<!-- PROGRESS (for questions) -->
+<div class="hidden" id="progressBar" style="background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;position:sticky;top:44px;z-index:9">
+<div class="progress-inner" style="max-width:680px;margin:0 auto;display:flex;align-items:center;gap:12px">
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-text" id="progressText">0 de 20</div>
+</div>
+</div>
+
+<!-- STEP 2: QUESTIONS -->
+<div class="form-section hidden" id="formSection">
+<div class="profile-strip" id="profileStrip"></div>
+<div id="questionsContainer"></div>
+<div class="cta-wrap">
+<button class="btn btn-primary" id="submitBtn" disabled onclick="showLead()">Ver mis resultados</button>
+<p style="font-size:11px;color:var(--text3);margin-top:6px" id="remainMsg">Responde todas las preguntas para ver tus resultados</p>
+</div>
+</div>
+
+<!-- LEAD CAPTURE -->
+<div class="lead-section" id="leadSection">
+<div class="lead-card">
+<h2>¡Tu diagnóstico está listo!</h2>
+<p>Ingresa tus datos para ver tu radar de madurez y roadmap personalizado.</p>
+<div class="lead-form">
+<input type="text" id="leadName" placeholder="Tu nombre">
+<input type="text" id="leadCompany" placeholder="Nombre de tu empresa">
+<input type="email" id="leadEmail" placeholder="Tu correo electrónico">
+<input type="tel" id="leadPhone" placeholder="Teléfono (opcional)">
+<button class="btn btn-primary" onclick="showResults()" style="width:100%;margin-top:4px">Ver mi diagnóstico</button>
+<p style="font-size:10px;color:var(--text3);margin-top:4px">Tus datos están seguros. No spam, no compartimos tu información.</p>
+</div>
+</div>
+</div>
+
+<!-- STEP 3: RESULTS -->
+<div class="results-section" id="resultsSection">
+<div class="results-header">
+<h2>Diagnóstico Express Mi-CHRO</h2>
+<p id="resultsFor"></p>
+<div id="scoreBadge"></div>
+</div>
+<div class="profile-result" id="profileResult"></div>
+<div class="radar-wrap">
+<h3>Tu radar de madurez por pilar</h3>
+<div class="radar-canvas"><canvas id="radarChart"></canvas></div>
+</div>
+<div class="pillar-scores" id="pillarScoresEl"></div>
+<div class="roadmap">
+<h3>Tu roadmap light personalizado</h3>
+<p>Acciones prioritarias basadas en tu diagnóstico y los retos que identificaste — ordenadas por impacto inmediato.</p>
+<div id="roadmapItems"></div>
+</div>
+<div class="cta-final">
+<h3>¿Quieres el diagnóstico completo?</h3>
+<div class="compare">
+<div><strong>20</strong><span>Indicadores express</span></div>
+<div><strong>47</strong><span>Prácticas en assessment completo</span></div>
+</div>
+<p>El assessment completo Mi-CHRO profundiza en 47 prácticas con escala de 5 niveles de madurez, genera un radar detallado por subproceso y un roadmap priorizado con Matriz Impacto-Esfuerzo.</p>
+<button class="btn btn-white" onclick="alert('¡Gracias! Un asesor de Mi-CHRO se pondrá en contacto contigo para agendar tu assessment completo.')">Agendar assessment completo</button>
+</div>
+</div>
+
+</div>
+
+<script>
+// ─── PROFILE STATE ───
+const profile = {size:null,stage:null,hr:null,challenges:[],role:null};
+let challengeOrder = 0;
+
+// Challenge to pillar mapping
+const challengePillarMap = {
+  0: [0],     // Atraer talento → P1
+  1: [2],     // Rotación → P3
+  2: [4],     // Alineación → P5
+  3: [0,2,4], // Formalizar → P1,P3,P5
+  4: [1],     // Líderes → P2
+  5: [4],     // No medimos → P5
+  6: [3],     // Comunicación → P4
+  7: [0,1],   // Crecimiento → P1,P2
+  8: [3],     // Cultura → P4
+  9: [4]      // RH administrativo → P5
+};
+
+const challengeTexts = [
+  "Atraer y contratar talento","Rotación alta","Alineación con resultados",
+  "Formalizar procesos de RH","Líderes no preparados","No medimos gestión de personas",
+  "Comunicación interna deficiente","RH no da abasto al crecimiento",
+  "Cambiar la cultura","RH solo es administrativo"
+];
+
+function pfSelect(field, el, val) {
+  profile[field] = val;
+  el.parentElement.querySelectorAll('.pf-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  checkProfile();
+}
+
+function chToggle(el, idx) {
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+    profile.challenges = profile.challenges.filter(c => c !== idx);
+    updateChallengeState();
+    checkProfile();
+    return;
+  }
+  if (profile.challenges.length >= 2) return;
+  profile.challenges.push(idx);
+  el.classList.add('selected');
+  challengeOrder++;
+  el.querySelector('.ch-count').textContent = profile.challenges.length === 1 && profile.challenges[0] === idx ? '1' : '2';
+  // Recount
+  const allCh = document.querySelectorAll('#pfChallenges .ch-opt');
+  let n = 1;
+  profile.challenges.forEach(ci => {
+    allCh[ci].querySelector('.ch-count').textContent = n;
+    n++;
+  });
+  updateChallengeState();
+  checkProfile();
+}
+
+function updateChallengeState() {
+  const allCh = document.querySelectorAll('#pfChallenges .ch-opt');
+  allCh.forEach((el, i) => {
+    if (profile.challenges.length >= 2 && !el.classList.contains('selected')) {
+      el.classList.add('disabled');
+    } else {
+      el.classList.remove('disabled');
+    }
+  });
+}
+
+function checkProfile() {
+  const ok = profile.size && profile.stage && profile.hr && profile.challenges.length === 2 && profile.role;
+  document.getElementById('profileBtn').disabled = !ok;
+  document.getElementById('profileMsg').textContent = ok ? '¡Perfil completo!' : 'Completa todas las secciones para continuar';
+}
+
+// ─── SIZE → SEGMENT MAPPING ───
+function getSegment() {
+  const s = profile.size;
+  if (s === '1-49') return 'e';
+  if (s === '50-99') return 'f';
+  if (s === '100-299') return 'm';
+  return 'a';
+}
+
+// ─── QUESTIONS ───
+const questions = [
+  // P1: Atracción y onboarding
+  {id:1,p:0,text:"¿Tu empresa tiene definido cuántas personas necesita por área y un presupuesto de mano de obra alineado al plan de negocio?",
+   opts:["No lo tenemos","Lo hacemos pero de manera informal","Lo tenemos estructurado y se revisa periódicamente"],seg:'e'},
+  {id:2,p:0,text:"¿Tienes claro qué hace atractiva a tu empresa como empleador frente a la competencia? (propuesta de valor al colaborador)",
+   opts:["No lo hemos definido","Tenemos una idea pero no está documentada ni comunicada","Está definida, documentada y la usamos activamente"],seg:'e'},
+  {id:3,p:0,text:"¿Cuando entra un nuevo colaborador, tiene un proceso de integración estructurado en sus primeros 90 días?",
+   opts:["No, cada quien se adapta como puede","Hay algo básico pero no es consistente","Sí, tenemos un programa formal con seguimiento"],seg:'e'},
+  {id:4,p:0,text:"¿Mides cuánto tiempo tardas en cubrir una vacante y cuántos de tus nuevos ingresos pasan el periodo de prueba?",
+   opts:["No medimos nada de eso","Tenemos algunos datos pero no los analizamos","Sí, lo medimos y tomamos decisiones con esos datos"],seg:'f'},
+
+  // P2: Desempeño y desarrollo
+  {id:5,p:1,text:"¿Los objetivos de cada colaborador están alineados con la estrategia del negocio, y cada quien sabe cómo contribuye a los resultados?",
+   opts:["No, cada área trabaja por su cuenta","Algunos líderes lo hacen pero no es sistemático","Sí, hay un proceso formal de cascadeo de objetivos"],seg:'e'},
+  {id:6,p:1,text:"¿Evalúas formalmente el desempeño de tu equipo al menos una vez al año con retroalimentación documentada?",
+   opts:["No hacemos evaluaciones formales","Se hace de manera inconsistente, sin formato estándar","Sí, tenemos un ciclo de evaluación formal y documentado"],seg:'f'},
+  {id:7,p:1,text:"¿Inviertes en capacitación y desarrollo de tus líderes y mandos intermedios con un plan estructurado?",
+   opts:["No, la capacitación es reactiva o inexistente","Hacemos capacitación pero sin un plan estratégico","Sí, hay un plan anual de desarrollo alineado al negocio"],seg:'e'},
+  {id:8,p:1,text:"¿Tienes identificadas las posiciones clave del negocio y quién podría sustituir a esas personas si se van?",
+   opts:["No lo hemos hecho","Sabemos quiénes son clave pero no hay plan de sucesión","Sí, tenemos posiciones clave mapeadas con sucesores identificados"],seg:'m'},
+
+  // P3: Engagement y retención
+  {id:9,p:2,text:"¿Tu estructura de compensación (sueldo fijo y variable) es competitiva y está documentada con criterios claros?",
+   opts:["No, los sueldos se definen caso por caso","Hay cierta estructura pero no está formalizada","Sí, tenemos tabuladores, políticas y criterios claros"],seg:'e'},
+  {id:10,p:2,text:"¿Mides regularmente el nivel de compromiso y satisfacción de tus colaboradores con encuestas o pulsos?",
+   opts:["No medimos nada de eso","Lo hemos hecho alguna vez pero no es recurrente","Sí, medimos periódicamente y actuamos sobre los resultados"],seg:'e'},
+  {id:11,p:2,text:"¿Tus colaboradores reciben reconocimiento visible cuando hacen bien su trabajo, más allá de su sueldo?",
+   opts:["No tenemos ningún programa de reconocimiento","Se hace de manera informal y esporádica","Sí, tenemos un programa estructurado de reconocimiento"],seg:'m'},
+  {id:12,p:2,text:"¿Conoces tu tasa de rotación voluntaria y sabes por qué se va la gente de tu empresa?",
+   opts:["No lo medimos ni hacemos entrevistas de salida","Tenemos el dato pero no lo analizamos a fondo","Sí, lo medimos, analizamos y tomamos acciones correctivas"],seg:'e'},
+
+  // P4: Cultura organizacional
+  {id:13,p:3,text:"¿Tu empresa tiene misión, visión y valores definidos, y los colaboradores los conocen y los viven en el día a día?",
+   opts:["No están definidos o solo existen en un cuadro en la pared","Están definidos pero pocos los conocen o aplican","Sí, están definidos, se comunican y se viven activamente"],seg:'e'},
+  {id:14,p:3,text:"¿Cuando implementas un cambio importante, sigues un proceso estructurado para gestionar la transición con las personas?",
+   opts:["No, los cambios se imponen y la gente se adapta","Intentamos comunicar pero no hay un proceso formal","Sí, gestionamos el cambio con plan de comunicación, capacitación y seguimiento"],seg:'f'},
+  {id:15,p:3,text:"¿Tienes canales efectivos para que la comunicación interna fluya en todas direcciones (no solo de arriba hacia abajo)?",
+   opts:["No, la comunicación es deficiente o solo de arriba hacia abajo","Hay algunos canales pero no son efectivos ni llegan a todos","Sí, tenemos canales claros, digitales y accesibles para todos"],seg:'e'},
+  {id:16,p:3,text:"¿Sientes que tu equipo tiene un sentido de comunidad y pertenencia, o cada quien trabaja en su burbuja?",
+   opts:["Cada quien trabaja por su lado, hay poca conexión","Hay buena relación pero no hay acciones deliberadas para fomentar comunidad","Sí, fomentamos activamente la comunidad con actividades, plataformas y rituales"],seg:'e'},
+
+  // P5: Planeación estratégica de RH
+  {id:17,p:4,text:"¿Tu estrategia de personas está formalmente conectada con tu plan de negocio (ventas, costos, productividad)?",
+   opts:["No, RH y negocio van por caminos separados","Hay cierta conexión pero no está documentada ni es sistemática","Sí, hay un mapa estratégico que vincula personas con resultados de negocio"],seg:'e'},
+  {id:18,p:4,text:"¿Tienes un plan anual de RH con iniciativas priorizadas, presupuesto y responsables asignados?",
+   opts:["No existe un plan anual de RH","Hay ideas sueltas pero no un plan formal priorizado","Sí, hay un plan anual con presupuesto, cronograma y responsables"],seg:'f'},
+  {id:19,p:4,text:"¿Revisas mensualmente indicadores de gestión de personas (rotación, ausentismo, productividad, engagement) con tu equipo directivo?",
+   opts:["No revisamos indicadores de personas","Revisamos algunos datos pero no de manera regular ni estructurada","Sí, tenemos un tablero de indicadores que revisamos mensualmente"],seg:'f'},
+  {id:20,p:4,text:"¿Usas alguna plataforma digital para gestionar procesos de RH (comunicación, encuestas, capacitación, solicitudes)?",
+   opts:["No, todo es manual o por correo/WhatsApp","Usamos alguna herramienta pero no de forma integral","Sí, tenemos una plataforma que centraliza varios procesos de RH"],seg:'e'}
+];
+
+const pillarNames = ["Atracción y onboarding","Desempeño y desarrollo","Engagement y retención","Cultura organizacional","Planeación estratégica de RH"];
+const pillarColors = ["#1D9E75","#EF9F27","#534AB7","#D85A30","#185FA5"];
+const answers = new Array(20).fill(-1);
+let activeQs = []; // indices of questions that apply
+
+// ─── NAVIGATION ───
+function goToProfile() {
+  document.getElementById('heroSection').classList.add('hidden');
+  document.getElementById('stepper').classList.remove('hidden');
+  document.getElementById('profileSection').classList.remove('hidden');
+  setStep(1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goToQuestions() {
+  document.getElementById('profileSection').classList.add('hidden');
+  document.getElementById('formSection').classList.remove('hidden');
+  document.getElementById('progressBar').classList.remove('hidden');
+  setStep(2);
+  renderProfileStrip();
+  renderQuestions();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('step'+i);
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  });
+}
+
+function renderProfileStrip() {
+  const sizeLabels = {'1-49':'1-49 emp.','50-99':'50-99 emp.','100-299':'100-299 emp.','300-500':'300-500 emp.','500+':'500+ emp.'};
+  const stageLabels = {startup:'Startup',growing:'En crecimiento',stable:'Estable',restructuring:'Reestructuración'};
+  const hrLabels = {none:'Sin equipo RH','1':'1 persona RH','2-5':'2-5 personas RH','6+':'6+ personas RH'};
+  let html = `<span class="ps-tag">${sizeLabels[profile.size]||''}</span>`;
+  html += `<span class="ps-tag">${stageLabels[profile.stage]||''}</span>`;
+  html += `<span class="ps-tag">${hrLabels[profile.hr]||''}</span>`;
+  profile.challenges.forEach(ci => {
+    html += `<span class="ps-tag" style="background:#EEEDFE;border-color:#AFA9EC">${challengeTexts[ci]}</span>`;
+  });
+  document.getElementById('profileStrip').innerHTML = html;
+}
+
+// ─── RENDER QUESTIONS ───
+function renderQuestions() {
+  const seg = getSegment();
+  const segHierarchy = {e:['e'],f:['e','f'],m:['e','f','m'],a:['e','f','m','a']};
+  const allowed = segHierarchy[seg];
+
+  activeQs = [];
+  questions.forEach((q, i) => {
+    if (allowed.includes(q.seg)) activeQs.push(i);
+  });
+
+  const container = document.getElementById('questionsContainer');
+  let html = '';
+  let currentP = -1;
+  const plLabels = ['pl-1','pl-2','pl-3','pl-4','pl-5'];
+  let visibleNum = 0;
+
+  questions.forEach((q, qi) => {
+    const isActive = activeQs.includes(qi);
+    if (q.p !== currentP) {
+      if (currentP >= 0) html += '</div>';
+      currentP = q.p;
+      html += `<div class="pillar-group"><div class="pillar-label ${plLabels[currentP]}">${pillarNames[currentP]}</div>`;
+    }
+    if (isActive) {
+      visibleNum++;
+      html += `<div class="q-card" id="qc-${qi}">
+        <div class="q-num">Pregunta ${visibleNum} de ${activeQs.length}</div>
+        <div class="q-text">${q.text}</div>
+        <div class="q-options">`;
+      q.opts.forEach((opt, oi) => {
+        html += `<div class="q-opt" onclick="selOpt(${qi},${oi},this)"><div class="radio"></div><span>${opt}</span></div>`;
+      });
+      html += `</div></div>`;
+    } else {
+      answers[qi] = -2; // mark as N/A
+      html += `<div class="q-card" id="qc-${qi}" style="opacity:.5">
+        <div class="q-num" style="font-style:italic">No aplica para tu perfil</div>
+        <div class="q-text" style="color:var(--text3);font-size:13px">${q.text}</div>
+        <div class="q-na">Esta práctica aplica para empresas más grandes — no se incluye en tu diagnóstico.</div>
+      </div>`;
+    }
+  });
+  html += '</div>';
+  container.innerHTML = html;
+  updateProgress();
+}
+
+function selOpt(qi, oi, el) {
+  answers[qi] = oi;
+  const card = document.getElementById('qc-'+qi);
+  card.querySelectorAll('.q-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  card.classList.add('answered');
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = activeQs.length;
+  const answered = activeQs.filter(i => answers[i] >= 0).length;
+  const pct = (answered / total) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = answered + ' de ' + total;
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('remainMsg');
+  if (answered === total) {
+    btn.disabled = false;
+    msg.textContent = '¡Todas las preguntas contestadas!';
+  } else {
+    btn.disabled = true;
+    msg.textContent = `Faltan ${total - answered} preguntas`;
+  }
+}
+
+function showLead() {
+  document.getElementById('formSection').classList.add('hidden');
+  document.getElementById('progressBar').classList.add('hidden');
+  document.getElementById('leadSection').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ─── RESULTS ───
+function showResults() {
+  const name = document.getElementById('leadName').value || 'Tu empresa';
+  const company = document.getElementById('leadCompany').value || '';
+  document.getElementById('leadSection').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'block';
+  setStep(3);
+  document.getElementById('resultsFor').textContent = company ? `Resultados para ${company}` : `Resultados para ${name}`;
+
+  // Profile result summary
+  const sizeLabels = {'1-49':'1-49 empleados','50-99':'50-99 empleados','100-299':'100-299 empleados','300-500':'300-500 empleados','500+':'500+ empleados'};
+  const stageLabels = {startup:'startup / nueva',growing:'en crecimiento',stable:'estable / madura',restructuring:'en reestructuración'};
+  const hrLabels = {none:'sin equipo de RH dedicado','1':'con 1 persona en RH','2-5':'con equipo de RH de 2-5 personas','6+':'con equipo de RH de 6+ personas'};
+  document.getElementById('profileResult').innerHTML = `Empresa de <strong>${sizeLabels[profile.size]}</strong>, <strong>${stageLabels[profile.stage]}</strong>, <strong>${hrLabels[profile.hr]}</strong>. Retos principales: <strong>${challengeTexts[profile.challenges[0]]}</strong> y <strong>${challengeTexts[profile.challenges[1]]}</strong>.`;
+
+  // Calculate pillar scores
+  const pScores = [0,0,0,0,0];
+  const pCounts = [0,0,0,0,0];
+  questions.forEach((q, qi) => {
+    if (activeQs.includes(qi)) {
+      pScores[q.p] += answers[qi];
+      pCounts[q.p]++;
+    }
+  });
+  const pPcts = pScores.map((s, i) => pCounts[i] > 0 ? Math.round((s / (pCounts[i] * 2)) * 100) : 0);
+  const overall = Math.round(pPcts.reduce((a,b) => a+b, 0) / 5);
+
+  // Badge
+  const badge = document.getElementById('scoreBadge');
+  let bc, bt;
+  if (overall < 20) { bc='score-low'; bt='No instalada — Prácticas ausentes, acción inmediata requerida'; }
+  else if (overall < 40) { bc='score-low'; bt='Iniciando — Esfuerzos aislados, sin estandarizar'; }
+  else if (overall < 60) { bc='score-mid'; bt='Inconsistente — Prácticas existen pero sin consistencia'; }
+  else if (overall < 80) { bc='score-high'; bt='Consistente — Prácticas sólidas, a optimizar'; }
+  else { bc='score-high'; bt='Referente — Gestión de personas de clase mundial'; }
+  badge.innerHTML = `<div class="score-badge ${bc}">Madurez general: ${overall}% — ${bt}</div>`;
+
+  // Pillar scores
+  const psEl = document.getElementById('pillarScoresEl');
+  let psH = '';
+  pPcts.forEach((pct, i) => {
+    let lv, ls;
+    if (pct < 20) { lv='No instalada'; ls='background:var(--danger-bg);color:var(--danger)'; }
+    else if (pct < 40) { lv='Iniciando'; ls='background:var(--danger-bg);color:var(--danger)'; }
+    else if (pct < 60) { lv='Inconsistente'; ls='background:var(--warn-bg);color:var(--warn)'; }
+    else if (pct < 80) { lv='Consistente'; ls='background:var(--ok-bg);color:var(--ok)'; }
+    else { lv='Referente'; ls='background:#D8F3DC;color:#2D6A4F'; }
+    const barC = pct<20?"#E24B4A":pct<40?"#E24B4A":pct<60?"#EF9F27":pct<80?"#639922":"#1D9E75";
+    psH += `<div class="ps-row"><div class="ps-dot" style="background:${pillarColors[i]}"></div><div class="ps-name">${pillarNames[i]}</div><div class="ps-bar-wrap"><div class="ps-bar" style="width:${pct}%;background:${barC}"></div></div><div class="ps-val">${pct}%</div><div class="ps-level" style="${ls}">${lv}</div></div>`;
+  });
+  psEl.innerHTML = psH;
+
+  // Radar
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  function critColor(pct, alpha) {
+    if(pct<20) return `rgba(226,75,74,${alpha})`;
+    if(pct<40) return `rgba(226,75,74,${alpha})`;
+    if(pct<60) return `rgba(239,159,39,${alpha})`;
+    if(pct<80) return `rgba(99,153,34,${alpha})`;
+    return `rgba(29,158,117,${alpha})`;
+  }
+  const levelRingPlugin = {
+    id:'levelRings',
+    beforeDatasetsDraw(chart) {
+      const {ctx:c, scales:{r}} = chart;
+      const cx=r.xCenter, cy=r.yCenter, maxR=r.drawingArea;
+      const fills=['rgba(226,75,74,0.05)','rgba(239,159,39,0.05)','rgba(99,153,34,0.05)','rgba(29,158,117,0.05)'];
+      [25,50,75,100].forEach((lv,i)=>{
+        const rr=(lv/100)*maxR;
+        c.save(); c.beginPath(); c.arc(cx,cy,rr,0,Math.PI*2);
+        c.fillStyle=fills[i]; c.fill(); c.restore();
+      });
+    }
+  };
+  new Chart(ctx, {
+    type:'radar',
+    plugins:[levelRingPlugin],
+    data:{
+      labels:pillarNames.map(n => n.length>18 ? n.substring(0,16)+'...' : n),
+      datasets:[{
+        label:'Tu empresa', data:pPcts,
+        backgroundColor: pPcts.map(v=>critColor(v,0.18)),
+        borderColor: pPcts.map(v=>critColor(v,1)),
+        borderWidth:2.5,
+        pointBackgroundColor: pPcts.map(v=>critColor(v,1)),
+        pointBorderColor: pPcts.map(v=>critColor(v,1)),
+        pointRadius:6,
+        segment:{
+          borderColor: c => critColor((pPcts[c.p0DataIndex]+pPcts[c.p1DataIndex%pPcts.length])/2, 1),
+          backgroundColor: c => critColor((pPcts[c.p0DataIndex]+pPcts[c.p1DataIndex%pPcts.length])/2, 0.18),
+        }
+      }]
+    },
+    options:{
+      responsive:true,
+      scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:25,font:{size:10},backdropColor:'transparent',callback:v=>v===0?'':v===25?'Iniciando':v===50?'Inconsistente':v===75?'Consistente':'Referente'},pointLabels:{font:{size:10,family:'DM Sans'}},grid:{color:'rgba(0,0,0,.06)'}}},
+      plugins:{legend:{display:false}}
+    }
+  });
+
+  generateRoadmap(pPcts);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function generateRoadmap(pcts) {
+  const recs = [
+    [ // P1
+      {t:"Define tu headcount y presupuesto de mano de obra",d:"Sin planeación de personal, cada contratación es reactiva. Documenta cuántas personas necesitas por área, alineado a tu plan de ventas."},
+      {t:"Construye tu propuesta de valor al colaborador (EVP)",d:"Define qué hace única a tu empresa como empleador. Esto mejora la atracción de talento y reduce el costo de contratación."},
+      {t:"Implementa un programa de onboarding de 90 días",d:"Los primeros 90 días determinan si un colaborador se queda o se va. Un onboarding estructurado reduce rotación temprana hasta 50%."},
+      {t:"Mide tiempo de cobertura y efectividad de contratación",d:"Empieza con dos indicadores: días para cubrir vacante y retención al primer año."}
+    ],
+    [ // P2
+      {t:"Implementa cascadeo de objetivos desde la estrategia",d:"Cada persona debe saber cómo su trabajo impacta los resultados del negocio. Baja los objetivos del plan estratégico hasta nivel individual."},
+      {t:"Establece un ciclo anual de evaluación de desempeño",d:"Sin evaluación formal, las decisiones de talento son subjetivas. Implementa al menos una evaluación anual con retroalimentación."},
+      {t:"Crea un plan de desarrollo para líderes y mandos intermedios",d:"Tus mandos intermedios son el cuello de botella o el acelerador de tu organización. Invierte en su desarrollo."},
+      {t:"Identifica posiciones clave y mapea sucesores",d:"¿Qué pasa si mañana se va tu mejor vendedor o tu gerente de operaciones? Mapea las posiciones clave y prepara sustitutos."}
+    ],
+    [ // P3
+      {t:"Formaliza tu estructura de compensación",d:"Tabuladores claros, criterios de aumento y compensación variable documentados reducen la discrecionalidad y aumentan la equidad."},
+      {t:"Implementa medición recurrente de engagement",d:"Una encuesta de pulso trimestral te da visibilidad sobre cómo se siente tu equipo antes de que los problemas se conviertan en rotación."},
+      {t:"Lanza un programa de reconocimiento alineado a valores",d:"El reconocimiento es la herramienta de retención más barata y efectiva. Vincula el reconocimiento a los comportamientos que quieres reforzar."},
+      {t:"Analiza tu rotación y actúa sobre las causas raíz",d:"Implementa entrevistas de salida y actúa sobre los hallazgos. Medir sin actuar es desperdiciar información valiosa."}
+    ],
+    [ // P4
+      {t:"Define y comunica misión, visión y valores de forma viva",d:"No se trata de un cuadro en la pared. Integra los valores en evaluaciones, reconocimiento y decisiones de contratación."},
+      {t:"Adopta un modelo de gestión del cambio",d:"Todo proyecto importante necesita un plan de cambio: stakeholders, comunicación, capacitación y seguimiento."},
+      {t:"Establece canales de comunicación interna bidireccionales",d:"La comunicación solo de arriba hacia abajo mata el engagement. Implementa canales donde todos puedan participar."},
+      {t:"Fomenta la comunidad y sentido de pertenencia",d:"Una plataforma digital como comunidad interna, eventos de integración y rituales de equipo fortalecen la cultura."}
+    ],
+    [ // P5
+      {t:"Conecta tu estrategia de personas con el plan de negocio",d:"Usa un Balanced Scorecard para vincular cada iniciativa de RH con un resultado financiero, de cliente, de proceso o de aprendizaje."},
+      {t:"Crea tu plan anual de RH con iniciativas priorizadas",d:"Un plan anual con presupuesto, responsables y cronograma convierte las buenas intenciones en acciones concretas."},
+      {t:"Implementa una rutina mensual de revisión de indicadores",d:"Rotación, ausentismo, productividad y engagement deben revisarse mensualmente con el comité directivo, igual que las ventas."},
+      {t:"Digitaliza tus procesos de RH en una plataforma integral",d:"Pasar de WhatsApp y Excel a una plataforma integral mejora la eficiencia, genera datos para decidir y profesionaliza la gestión."}
+    ]
+  ];
+
+  // Get pillars affected by challenges
+  const challengePillars = new Set();
+  profile.challenges.forEach(ci => {
+    (challengePillarMap[ci]||[]).forEach(pi => challengePillars.add(pi));
+  });
+
+  let items = [];
+  pcts.forEach((pct, pi) => {
+    const r = recs[pi];
+    const isChallengePillar = challengePillars.has(pi);
+    if (pct < 35) {
+      items.push({...r[0], pillar:pi, pct, pri:'high', ch:isChallengePillar});
+      items.push({...r[1], pillar:pi, pct, pri:'high', ch:isChallengePillar});
+    } else if (pct < 65) {
+      items.push({...r[1], pillar:pi, pct, pri:'med', ch:isChallengePillar});
+      items.push({...r[2], pillar:pi, pct, pri:'med', ch:isChallengePillar});
+    } else {
+      items.push({...r[3], pillar:pi, pct, pri:'low', ch:isChallengePillar});
+    }
+  });
+
+  // Sort: challenge-related first within each priority tier
+  const po = {high:0, med:1, low:2};
+  items.sort((a,b) => {
+    if (po[a.pri] !== po[b.pri]) return po[a.pri] - po[b.pri];
+    if (a.ch !== b.ch) return a.ch ? -1 : 1;
+    return 0;
+  });
+
+  const el = document.getElementById('roadmapItems');
+  let html = '';
+  items.forEach(item => {
+    const pLbl = item.pri === 'high' ? 'Prioridad alta' : item.pri === 'med' ? 'Prioridad media' : 'Optimización';
+    html += `<div class="rm-item p-${item.pri}">
+      <div class="rm-header">
+        <span class="rm-pri ${item.pri}">${pLbl}</span>
+        <span class="rm-pillar">${pillarNames[item.pillar]}</span>
+      </div>
+      <div class="rm-title">${item.t}</div>
+      <div class="rm-desc">${item.d}</div>
+      ${item.ch ? '<div class="rm-challenge">&#9733; Relacionado con tus retos principales</div>' : ''}
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+</script>
+</body>
+</html>
