@@ -774,34 +774,43 @@ function generateRoadmap(pcts) {
   el.innerHTML = html;
 }
 </script>
-<script src="https://js.hsforms.net/forms/embed/46526725.js" defer></script>
+<script src="https://js.hsforms.net/forms/embed/v2.js"></script>
 <script>
 function loadHubSpotForm() {
-  if(window.hbspt) {
-    hbspt.forms.create({
-      region: "na1",
-      portalId: "46526725",
-      formId: "faf191f4-d3ea-4889-9aca-c6f7d7bff169",
-      target: "#hubspotFormContainer",
-      onFormSubmit: function($form) {
-        const nameField = $form.find('input[name="firstname"]').val() || '';
-        const companyField = $form.find('input[name="company"]').val() || '';
-        document.getElementById('leadSection').style.display = 'none';
-        document.getElementById('resultsSection').style.display = 'block';
-        setStep(3);
-        window._leadName = nameField;
-        window._leadCompany = companyField;
-        renderResults(nameField, companyField);
-      },
-      onFormReady: function($form) {
-        setTimeout(function() {
-          var btn = document.querySelector('#hubspotFormContainer input[type="submit"], #hubspotFormContainer button[type="submit"]');
-          if(btn) { btn.value = 'Ver mi diagnóstico'; btn.textContent = 'Ver mi diagnóstico'; }
-        }, 500);
-      }
-    });
+  var container = document.getElementById('hubspotFormContainer');
+  if(!container || container.children.length > 0) return;
+  function createForm() {
+    if(window.hbspt && window.hbspt.forms) {
+      hbspt.forms.create({
+        region: "na1",
+        portalId: "46526725",
+        formId: "faf191f4-d3ea-4889-9aca-c6f7d7bff169",
+        target: "#hubspotFormContainer",
+        onFormSubmitted: function() {
+          setTimeout(function() {
+            var name = document.querySelector('#hubspotFormContainer input[name="firstname"]');
+            var company = document.querySelector('#hubspotFormContainer input[name="company"]');
+            var n = name ? name.value : '';
+            var c = company ? company.value : '';
+            document.getElementById('leadSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+            setStep(3);
+            renderResults(n, c);
+          }, 400);
+        }
+      });
+    } else {
+      setTimeout(createForm, 200);
+    }
+  }
+  var script = document.querySelector('script[src*="hsforms.net"]');
+  if(!script) {
+    script = document.createElement('script');
+    script.src = 'https://js.hsforms.net/forms/embed/v2.js';
+    script.onload = createForm;
+    document.head.appendChild(script);
   } else {
-    setTimeout(loadHubSpotForm, 300);
+    createForm();
   }
 }
 </script>
