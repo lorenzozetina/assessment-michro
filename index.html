@@ -615,7 +615,7 @@ function renderResults(name, company) {
   });
   const pPcts = pScores.map((s, i) => pCounts[i] > 0 ? Math.round((s / (pCounts[i] * 2)) * 100) : 0);
   const overall = Math.round(pPcts.reduce((a,b) => a+b, 0) / 5);
-  sendToHubSpot(name, email, company, phone, overall, pPcts);
+  // HubSpot recibe los datos via el formulario embed
 
   // Badge
   const badge = document.getElementById('scoreBadge');
@@ -643,7 +643,9 @@ function renderResults(name, company) {
   psEl.innerHTML = psH;
 
   // Radar
-  const ctx = document.getElementById('radarChart').getContext('2d');
+  const radarCanvas = document.getElementById('radarChart');
+  if(window._radarChart) { window._radarChart.destroy(); }
+  const ctx = radarCanvas.getContext('2d');
   function critColor(pct, alpha) {
     if(pct<20) return `rgba(226,75,74,${alpha})`;
     if(pct<40) return `rgba(226,75,74,${alpha})`;
@@ -664,7 +666,7 @@ function renderResults(name, company) {
       });
     }
   };
-  new Chart(ctx, {
+  window._radarChart = new Chart(ctx, {
     type:'radar',
     plugins:[levelRingPlugin],
     data:{
