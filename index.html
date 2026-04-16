@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mi-CHRO — Assessment Express</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/css/intlTelInput.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://js.hsforms.net/forms/embed/v2.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/js/intlTelInput.min.js"></script>
 <style>
 :root{--bg:#FAFAF8;--surface:#FFF;--surface2:#F3F2EE;--text:#1A1A18;--text2:#6B6A65;--text3:#9C9B96;--accent:#1D9E75;--accent-lt:#E1F5EE;--accent2:#534AB7;--border:#E5E4E0;--p1:#1D9E75;--p1b:#E1F5EE;--p2:#EF9F27;--p2b:#FAEEDA;--p3:#534AB7;--p3b:#EEEDFE;--p4:#D85A30;--p4b:#FAECE7;--p5:#185FA5;--p5b:#E6F1FB;--danger:#E24B4A;--danger-bg:#FCEBEB;--warn:#EF9F27;--warn-bg:#FAEEDA;--ok:#1D9E75;--ok-bg:#E1F5EE;--r:12px;--rs:8px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -267,8 +268,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);lin
 <div class="lead-card">
 <h2>¡Tu diagnóstico está listo!</h2>
 <p>Ingresa tus datos para ver tu radar de madurez y roadmap personalizado.</p>
-<div id="hubspotFormContainer" style="max-width:420px;margin:0 auto;text-align:left;"></div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;text-align:center">Tus datos están seguros. No spam, no compartimos tu información.</p>
+<div class="lead-form">
+<input type="text" id="leadName" placeholder="Tu nombre" required>
+<input type="text" id="leadCompany" placeholder="Nombre de tu empresa">
+<input type="email" id="leadEmail" placeholder="Tu correo electrónico" required>
+<input type="tel" id="leadPhone" placeholder="Número de WhatsApp" style="width:100%">
+<button class="btn btn-primary" id="leadSubmitBtn" onclick="submitLeadAndShowResults()" style="width:100%;margin-top:4px">Ver mi diagnóstico</button>
+<p style="font-size:10px;color:var(--text3);margin-top:4px;text-align:center">Tus datos están seguros. No spam, no compartimos tu información.</p>
+</div>
 </div>
 </div>
 
@@ -565,6 +572,17 @@ function showLead() {
   document.getElementById('leadSection').style.display = 'block';
   window.scrollTo({top:0,behavior:'smooth'});
   loadHubSpotForm();
+  setTimeout(function() {
+    var phoneInput = document.getElementById('leadPhone');
+    if(phoneInput && window.intlTelInput && !phoneInput._iti) {
+      phoneInput._iti = intlTelInput(phoneInput, {
+        initialCountry: 'mx',
+        preferredCountries: ['mx','us','co','ar','cl','pe','br'],
+        utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/js/utils.js',
+        separateDialCode: true
+      });
+    }
+  }, 300);
 }
 
 // ─── RESULTS ───
@@ -778,73 +796,36 @@ function generateRoadmap(pcts) {
 }
 </script>
 <script>
-function loadHubSpotForm() {
-  var container = document.getElementById('hubspotFormContainer');
-  if(!container) return;
-  container.innerHTML = '';
+function loadHubSpotForm() {}
 
-  function goToResults() {
-    var inputs = container.querySelectorAll('input, select, textarea');
-    var n = '', c = '';
-    inputs.forEach(function(inp) {
-      if(inp.name === 'firstname') n = inp.value;
-      if(inp.name === 'company') c = inp.value;
+async function submitLeadAndShowResults() {
+  const name = document.getElementById('leadName').value.trim();
+  const email = document.getElementById('leadEmail').value.trim();
+  const company = document.getElementById('leadCompany').value.trim();
+  const phoneEl = document.getElementById('leadPhone');
+  const phone = phoneEl._iti ? phoneEl._iti.getNumber() : phoneEl.value.trim();
+  if(!name || !email) { alert('Por favor ingresa tu nombre y correo electrónico.'); return; }
+  const btn = document.getElementById('leadSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Procesando...';
+  try {
+    await fetch('https://api.hsforms.com/submissions/v3/integration/submit/46526725/faf191f4-d3ea-4889-9aca-c6f7d7bff169', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fields: [
+          { name: 'firstname', value: name },
+          { name: 'email', value: email },
+          { name: 'company', value: company },
+        ],
+        context: { pageUri: window.location.href, pageName: 'Assessment Express Mi-CHRO' }
+      })
     });
-    window._hsName = n;
-    window._hsCompany = c;
-    document.getElementById('leadSection').style.display = 'none';
-    document.getElementById('resultsSection').style.display = 'block';
-    setStep(3);
-    renderResults(n, c);
-  }
-
-  function watchForSubmission() {
-    var gone = false;
-    var observer = new MutationObserver(function() {
-      if(gone) return;
-      var html = container.innerHTML.toLowerCase();
-      if(html.includes('gracias') || html.includes('enviado') || html.includes('thank') || html.includes('submitted') || html.includes('submitted-message')) {
-        gone = true;
-        observer.disconnect();
-        setTimeout(goToResults, 600);
-      }
-    });
-    observer.observe(container, { childList: true, subtree: true, characterData: true });
-  }
-
-  function createForm() {
-    if(window.hbspt && window.hbspt.forms) {
-      watchForSubmission();
-      hbspt.forms.create({
-        region: "na1",
-        portalId: "46526725",
-        formId: "faf191f4-d3ea-4889-9aca-c6f7d7bff169",
-        target: "#hubspotFormContainer",
-        onFormSubmit: function($form) {
-          try {
-            window._hsName = $form.find('input[name="firstname"]').val() || '';
-            window._hsCompany = $form.find('input[name="company"]').val() || '';
-          } catch(e) {}
-          setTimeout(goToResults, 1200);
-        },
-        onFormSubmitted: function() {
-          setTimeout(goToResults, 800);
-        }
-      });
-    } else {
-      setTimeout(createForm, 200);
-    }
-  }
-
-  var script = document.querySelector('script[src*="hsforms.net"]');
-  if(!script) {
-    script = document.createElement('script');
-    script.src = 'https://js.hsforms.net/forms/embed/v2.js';
-    script.onload = createForm;
-    document.head.appendChild(script);
-  } else {
-    createForm();
-  }
+  } catch(e) {}
+  document.getElementById('leadSection').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'block';
+  setStep(3);
+  renderResults(name, company);
 }
 </script>
 </body>
