@@ -778,11 +778,18 @@ function generateRoadmap(pcts) {
 <script>
 function loadHubSpotForm() {
   var container = document.getElementById('hubspotFormContainer');
-  if(!container || container.children.length > 0) return;
+  if(!container) return;
+  container.innerHTML = '';
 
   function goToResults() {
-    var n = window._hsName || '';
-    var c = window._hsCompany || '';
+    var inputs = container.querySelectorAll('input, select, textarea');
+    var n = '', c = '';
+    inputs.forEach(function(inp) {
+      if(inp.name === 'firstname') n = inp.value;
+      if(inp.name === 'company') c = inp.value;
+    });
+    window._hsName = n;
+    window._hsCompany = c;
     document.getElementById('leadSection').style.display = 'none';
     document.getElementById('resultsSection').style.display = 'block';
     setStep(3);
@@ -790,20 +797,17 @@ function loadHubSpotForm() {
   }
 
   function watchForSubmission() {
-    var observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(m) {
-        m.addedNodes.forEach(function(node) {
-          if(node.nodeType === 1) {
-            var text = node.textContent || '';
-            if(text.includes('Gracias') || text.includes('enviado') || text.includes('submitted') || node.classList && node.classList.contains('submitted-message')) {
-              observer.disconnect();
-              setTimeout(goToResults, 800);
-            }
-          }
-        });
-      });
+    var gone = false;
+    var observer = new MutationObserver(function() {
+      if(gone) return;
+      var html = container.innerHTML.toLowerCase();
+      if(html.includes('gracias') || html.includes('enviado') || html.includes('thank') || html.includes('submitted') || html.includes('submitted-message')) {
+        gone = true;
+        observer.disconnect();
+        setTimeout(goToResults, 600);
+      }
     });
-    observer.observe(container, { childList: true, subtree: true });
+    observer.observe(container, { childList: true, subtree: true, characterData: true });
   }
 
   function createForm() {
@@ -816,12 +820,13 @@ function loadHubSpotForm() {
         target: "#hubspotFormContainer",
         onFormSubmit: function($form) {
           try {
-            window._hsName = $form.find ? $form.find('input[name="firstname"]').val() : '';
-            window._hsCompany = $form.find ? $form.find('input[name="company"]').val() : '';
+            window._hsName = $form.find('input[name="firstname"]').val() || '';
+            window._hsCompany = $form.find('input[name="company"]').val() || '';
           } catch(e) {}
+          setTimeout(goToResults, 1200);
         },
         onFormSubmitted: function() {
-          setTimeout(goToResults, 600);
+          setTimeout(goToResults, 800);
         }
       });
     } else {
