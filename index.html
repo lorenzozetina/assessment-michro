@@ -779,30 +779,56 @@ function generateRoadmap(pcts) {
 function loadHubSpotForm() {
   var container = document.getElementById('hubspotFormContainer');
   if(!container || container.children.length > 0) return;
+
+  function goToResults() {
+    var n = window._hsName || '';
+    var c = window._hsCompany || '';
+    document.getElementById('leadSection').style.display = 'none';
+    document.getElementById('resultsSection').style.display = 'block';
+    setStep(3);
+    renderResults(n, c);
+  }
+
+  function watchForSubmission() {
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        m.addedNodes.forEach(function(node) {
+          if(node.nodeType === 1) {
+            var text = node.textContent || '';
+            if(text.includes('Gracias') || text.includes('enviado') || text.includes('submitted') || node.classList && node.classList.contains('submitted-message')) {
+              observer.disconnect();
+              setTimeout(goToResults, 800);
+            }
+          }
+        });
+      });
+    });
+    observer.observe(container, { childList: true, subtree: true });
+  }
+
   function createForm() {
     if(window.hbspt && window.hbspt.forms) {
+      watchForSubmission();
       hbspt.forms.create({
         region: "na1",
         portalId: "46526725",
         formId: "faf191f4-d3ea-4889-9aca-c6f7d7bff169",
         target: "#hubspotFormContainer",
+        onFormSubmit: function($form) {
+          try {
+            window._hsName = $form.find ? $form.find('input[name="firstname"]').val() : '';
+            window._hsCompany = $form.find ? $form.find('input[name="company"]').val() : '';
+          } catch(e) {}
+        },
         onFormSubmitted: function() {
-          setTimeout(function() {
-            var name = document.querySelector('#hubspotFormContainer input[name="firstname"]');
-            var company = document.querySelector('#hubspotFormContainer input[name="company"]');
-            var n = name ? name.value : '';
-            var c = company ? company.value : '';
-            document.getElementById('leadSection').style.display = 'none';
-            document.getElementById('resultsSection').style.display = 'block';
-            setStep(3);
-            renderResults(n, c);
-          }, 400);
+          setTimeout(goToResults, 600);
         }
       });
     } else {
       setTimeout(createForm, 200);
     }
   }
+
   var script = document.querySelector('script[src*="hsforms.net"]');
   if(!script) {
     script = document.createElement('script');
