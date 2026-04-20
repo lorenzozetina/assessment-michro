@@ -134,7 +134,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);lin
 .rm-item.p-high{border-left-color:var(--danger)}.rm-item.p-med{border-left-color:var(--warn)}.rm-item.p-low{border-left-color:var(--ok)}
 .rm-header{display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap}
 .rm-pri{font-size:9px;font-weight:600;text-transform:uppercase;padding:2px 6px;border-radius:3px}
-.rm-pri.high{background:var(--danger-bg);color:var(--danger)}.rm-pri.med{background:var(--warn-bg);color:var(--warn)}.rm-pri.low{background:var(--ok-bg);color:var(--ok)}
+.rm-pri.high{background:var(--danger-bg);color:var(--danger)}.rm-pri.med{background:var(--warn-bg);color:var(--warn)}.rm-pri.low{background:var(--ok-bg);color:var(--ok)}.rm-pri.ref{background:#D8F3DC;color:#1B4332}.rm-pri.keep{background:#E8F4FD;color:#185FA5}
 .rm-pillar{font-size:10px;color:var(--text3)}
 .rm-title{font-size:13px;font-weight:600;margin-bottom:2px}
 .rm-desc{font-size:11px;color:var(--text2);line-height:1.5}
@@ -301,7 +301,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);lin
 <h3>¿Quieres el diagnóstico completo?</h3>
 <div class="compare">
 <div><strong>20</strong><span>Indicadores express</span></div>
-<div><strong>47</strong><span>Prácticas en assessment completo</span></div>
+<div><strong>80+</strong><span>Prácticas en assessment completo</span></div>
 </div>
 <p>El assessment completo Mi-CHRO profundiza en 80+ prácticas con escala de 5 niveles de madurez, genera un radar detallado por subproceso y un roadmap priorizado con Matriz Impacto-Esfuerzo.</p>
 <button class="btn btn-white" onclick="alert('¡Gracias! Un asesor de Mi-CHRO se pondrá en contacto contigo para agendar tu assessment completo.')">Agendar assessment completo</button>
@@ -766,7 +766,7 @@ function generateRoadmap(pcts) {
       items.push({...r[1], pillar:pi, pct, pri:'med', ch:isChallengePillar});
       items.push({...r[2], pillar:pi, pct, pri:'med', ch:isChallengePillar});
     } else {
-      items.push({...r[3], pillar:pi, pct, pri:'low', ch:isChallengePillar});
+      items.push({...r[3], pillar:pi, pct, pri:'low', ch:isChallengePillar, ref:pct>=80});
     }
   });
 
@@ -798,10 +798,11 @@ function generateRoadmap(pcts) {
 
   let html = '';
   items.forEach(item => {
-    const pLbl = item.pri === 'high' ? 'Prioridad alta' : item.pri === 'med' ? 'Prioridad media' : 'Optimización';
-    html += `<div class="rm-item p-${item.pri}">
+    const pLbl = item.pri === 'high' ? 'Prioridad alta' : item.pri === 'med' ? 'Prioridad media' : item.ref ? 'Referente' : 'A mantener';
+    const badgeClass = item.pri === "low" ? (item.ref ? "ref" : "keep") : item.pri;
+html += `<div class="rm-item p-${item.pri}">
       <div class="rm-header">
-        <span class="rm-pri ${item.pri}">${pLbl}</span>
+        <span class="rm-pri ${badgeClass}">${pLbl}</span>
         <span class="rm-pillar">${pillarNames[item.pillar]}</span>
       </div>
       <div class="rm-title">${item.t}</div>
