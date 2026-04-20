@@ -429,19 +429,54 @@ footer p{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.6}
       <div>
         <p class="ssub" style="margin-bottom:32px">Si quieres explorar cómo Mi-CHRO puede ayudar a tu empresa, con gusto agendamos una conversación sin compromiso.</p>
         <div class="cont-items">
-          <a href="https://wa.me/521XXXXXXXXXX" class="cont-item" target="_blank"><div class="cont-icon">💬</div><div><h4>WhatsApp</h4><p>Respuesta en menos de 24 horas</p></div></a>
+          <a href="https://wa.me/5255668070004" class="cont-item" target="_blank"><div class="cont-icon">💬</div><div><h4>WhatsApp México</h4><p>+52 55 6680-7004</p></div></a>
+          <a href="https://wa.me/5493417440871" class="cont-item" target="_blank"><div class="cont-icon">💬</div><div><h4>WhatsApp Argentina</h4><p>+54 9 341 744-0871</p></div></a>
           <a href="mailto:lorenzo.zetina@outlook.com" class="cont-item"><div class="cont-icon">✉️</div><div><h4>Correo electrónico</h4><p>lorenzo.zetina@outlook.com</p></div></a>
           <a href="./assessment.html" class="cont-item" target="_blank"><div class="cont-icon">🎯</div><div><h4>Diagnóstico gratuito</h4><p>Empieza con el Assessment Express</p></div></a>
         </div>
       </div>
       <div>
-        <div class="cont-form">
-          <div class="fg"><label>Nombre</label><input type="text" placeholder="Tu nombre completo"></div>
-          <div class="fg"><label>Empresa</label><input type="text" placeholder="Nombre de tu empresa"></div>
-          <div class="fg"><label>Correo</label><input type="email" placeholder="tu@empresa.com"></div>
-          <div class="fg"><label>¿En qué te puedo ayudar?</label><textarea placeholder="Cuéntame brevemente qué está pasando en tu empresa..."></textarea></div>
-          <button class="btn-v">Enviar mensaje</button>
+        <div class="cont-form" id="contactForm">
+          <div class="fg"><label>Nombre</label><input type="text" id="cfName" placeholder="Tu nombre completo"></div>
+          <div class="fg"><label>Empresa</label><input type="text" id="cfCompany" placeholder="Nombre de tu empresa"></div>
+          <div class="fg"><label>Correo</label><input type="email" id="cfEmail" placeholder="tu@empresa.com"></div>
+          <div class="fg"><label>¿En qué te puedo ayudar?</label><textarea id="cfMessage" placeholder="Cuéntame brevemente qué está pasando en tu empresa..."></textarea></div>
+          <button class="btn-v" id="cfBtn" onclick="submitContactForm()">Enviar mensaje</button>
+          <p id="cfStatus" style="font-size:13px;color:var(--v);display:none;margin-top:8px;font-weight:500">✓ Mensaje enviado. Te contactamos pronto.</p>
         </div>
+
+<script>
+async function submitContactForm() {
+  const name = document.getElementById('cfName').value.trim();
+  const company = document.getElementById('cfCompany').value.trim();
+  const email = document.getElementById('cfEmail').value.trim();
+  const message = document.getElementById('cfMessage').value.trim();
+  if(!name || !email) { alert('Por favor ingresa tu nombre y correo.'); return; }
+  const btn = document.getElementById('cfBtn');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  try {
+    await fetch('https://api.hsforms.com/submissions/v3/integration/submit/46526725/faf191f4-d3ea-4889-9aca-c6f7d7bff169', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fields: [
+          { name: 'firstname', value: name },
+          { name: 'email', value: email },
+          { name: 'message', value: 'Empresa: ' + company + ' | Mensaje: ' + message }
+        ],
+        context: { pageUri: window.location.href, pageName: 'Mi-CHRO Landing — Contacto' }
+      })
+    });
+  } catch(e) {}
+  btn.style.display = 'none';
+  document.getElementById('cfStatus').style.display = 'block';
+  document.getElementById('cfName').value = '';
+  document.getElementById('cfEmail').value = '';
+  document.getElementById('cfCompany').value = '';
+  document.getElementById('cfMessage').value = '';
+}
+</script>
       </div>
     </div>
   </div>
