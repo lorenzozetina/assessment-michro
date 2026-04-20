@@ -689,7 +689,7 @@ function renderResults(name, company) {
     type:'radar',
     plugins:[levelRingPlugin],
     data:{
-      labels:pillarNames.map(n => n.length>18 ? n.substring(0,16)+'...' : n),
+      labels:['Atracción','Desempeño','Engagement','Cultura','Planeación'],
       datasets:[{
         label:'Tu empresa', data:pPcts,
         backgroundColor: pPcts.map(v=>critColor(v,0.18)),
