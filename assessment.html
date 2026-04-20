@@ -778,7 +778,24 @@ function generateRoadmap(pcts) {
     return 0;
   });
 
+  const overall2 = Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length);
   const el = document.getElementById('roadmapItems');
+
+  if(overall2 >= 80) {
+    el.innerHTML = `
+      <div style="background:linear-gradient(135deg,#085041,#0F6E56);border-radius:12px;padding:28px 24px;text-align:center;color:#fff;margin-bottom:16px">
+        <div style="font-size:32px;margin-bottom:12px">🏆</div>
+        <h4 style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-bottom:10px">Tu gestión de personas está en un nivel avanzado</h4>
+        <p style="font-size:13px;color:rgba(255,255,255,.8);line-height:1.6;max-width:440px;margin:0 auto 20px">Tus prácticas son sólidas y consistentes. El siguiente paso es llevarlas al siguiente nivel con tecnología que automatice, mida y potencie todo lo que ya tienes construido.</p>
+        <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:16px 20px;margin-bottom:20px">
+          <p style="font-size:13px;font-weight:600;color:#52B788;margin-bottom:6px">El siguiente paso natural para ti es Humand</p>
+          <p style="font-size:12px;color:rgba(255,255,255,.7);line-height:1.5">La app all-in-one de RRHH que digitaliza y potencia todo lo que ya tienes: comunicación, capacitación, engagement, reconocimiento y analytics — en una sola plataforma.</p>
+        </div>
+        <a href="mailto:lorenzo.zetina@outlook.com?subject=Quiero saber más sobre Humand" style="display:inline-block;background:#52B788;color:#fff;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none">Quiero saber más sobre Humand →</a>
+      </div>`;
+    return;
+  }
+
   let html = '';
   items.forEach(item => {
     const pLbl = item.pri === 'high' ? 'Prioridad alta' : item.pri === 'med' ? 'Prioridad media' : 'Optimización';
