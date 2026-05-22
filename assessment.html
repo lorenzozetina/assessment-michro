@@ -8,8 +8,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/css/intlTelInput.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/js/intlTelInput.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>emailjs.init("hg30_ZFIgAEaZSU3O");</script>
 <style>
 :root{--bg:#FAFAF8;--surface:#FFF;--surface2:#F3F2EE;--text:#1A1A18;--text2:#6B6A65;--text3:#9C9B96;--accent:#1D9E75;--accent-lt:#E1F5EE;--accent2:#534AB7;--border:#E5E4E0;--p1:#1D9E75;--p1b:#E1F5EE;--p2:#EF9F27;--p2b:#FAEEDA;--p3:#534AB7;--p3b:#EEEDFE;--p4:#D85A30;--p4b:#FAECE7;--p5:#185FA5;--p5b:#E6F1FB;--danger:#E24B4A;--danger-bg:#FCEBEB;--warn:#EF9F27;--warn-bg:#FAEEDA;--ok:#1D9E75;--ok-bg:#E1F5EE;--r:12px;--rs:8px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -592,14 +590,22 @@ async function sendToHubSpot(name, email, company, phone, overall, pillarScores)
     const PORTAL_ID = '46526725';
     const FORM_ID = 'faf191f4-d3ea-4889-9aca-c6f7d7bff169';
     const url = `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_ID}`;
-    const pillarNames = ['Atracción y Onboarding','Desempeño y Desarrollo','Engagement y Retención','HRIS & Analytics'];
+    const sizeLabels = {'1-49':'1-49 empleados','50-99':'50-99 empleados','100-299':'100-299 empleados','300-500':'300-500 empleados','500+':'500+ empleados'};
+    const nivelGeneral = overall >= 80 ? 'Referente' : overall >= 60 ? 'Consistente' : overall >= 40 ? 'Inconsistente' : overall >= 20 ? 'Iniciando' : 'No instalada';
     const payload = {
       fields: [
         { name: 'firstname', value: name },
         { name: 'email', value: email },
         { name: 'company', value: company },
         { name: 'phone', value: phone || '' },
-        { name: 'message', value: pillarNames.map((p,i) => `${p}: ${pillarScores[i]}%`).join(' | ') + ` | Score general: ${overall}%` },
+        { name: 'michro_score_general', value: overall },
+        { name: 'michro_nivel_general', value: nivelGeneral },
+        { name: 'michro_score_atraccion_y_onboarding', value: pillarScores[0] || 0 },
+        { name: 'michro_score_desempeno_y_desarrollo', value: pillarScores[1] || 0 },
+        { name: 'michro_score_engagement_y_retencion', value: pillarScores[2] || 0 },
+        { name: 'michro_score_cultura_organizacional', value: pillarScores[3] || 0 },
+        { name: 'michro_score_planeacion_estrategica_rh', value: pillarScores[4] || 0 },
+        { name: 'michro_score_tamano_de_empresa', value: sizeLabels[profile.size] || profile.size || '' },
       ],
       context: { pageUri: window.location.href, pageName: 'Assessment Express Mi-CHRO' },
       legalConsentOptions: { consent: { consentToProcess: true, text: 'Acepto recibir comunicaciones de Mi-CHRO.' } }
@@ -817,71 +823,6 @@ html += `<div class="rm-item p-${item.pri}">
 <script>
 function loadHubSpotForm() {}
 
-async function sendEmailJS(name, email, company, phone) {
-  const sizeLabels = {'1-49':'1-49 empleados','50-99':'50-99 empleados','100-299':'100-299 empleados','300-500':'300-500 empleados','500+':'500+ empleados'};
-  const stageLabels = {startup:'Startup / nueva',growing:'En crecimiento',stable:'Estable / madura',restructuring:'En reestructuración'};
-  const hrLabels = {none:'Sin equipo de RH','1':'1 persona en RH','2-5':'2-5 personas en RH','6+':'6+ personas en RH'};
-  const roleLabels = {ceo:'CEO / Director General',owner:'Dueño / Socio',hr:'Director / Gerente de RH',ops:'Director de Operaciones',other:'Otro'};
-  const pillarNames = ['Atracción y Onboarding','Desempeño y Desarrollo','Engagement y Retención','Cultura Organizacional','Planeación Estratégica RH'];
-  const nivelPilar = pct => pct < 20 ? 'No instalada' : pct < 40 ? 'Iniciando' : pct < 60 ? 'Inconsistente' : pct < 80 ? 'Consistente' : 'Avanzada';
-
-  // Calcular scores
-  const pCounts = [0,0,0,0,0];
-  const pScores = [0,0,0,0,0];
-  const activeQs = questions.map((_,i)=>i).filter(i => {
-    const q = questions[i];
-    if(!q.seg) return true;
-    if(q.seg==='s' && profile.stage!=='startup') return false;
-    if(q.seg==='f' && (profile.stage==='startup'||profile.stage==='growing')) return false;
-    return true;
-  });
-  activeQs.forEach(qi => {
-    if(answers[qi] >= 0) {
-      pScores[questions[qi].p] += answers[qi];
-      pCounts[questions[qi].p]++;
-    }
-  });
-  const pPcts = pScores.map((s,i) => pCounts[i]>0 ? Math.round((s/(pCounts[i]*2))*100) : 0);
-  const overall = Math.round(pPcts.reduce((a,b)=>a+b,0)/5);
-  let nivelGeneral = overall < 20 ? 'No instalada' : overall < 40 ? 'Iniciando' : overall < 60 ? 'Inconsistente' : overall < 80 ? 'Consistente' : 'Avanzada';
-
-  // Respuestas detalladas
-  let respuestasDetalle = '';
-  activeQs.forEach(qi => {
-    const q = questions[qi];
-    const ans = answers[qi];
-    if(ans >= 0) {
-      respuestasDetalle += `[${pillarNames[q.p]}] ${q.text}\n→ ${q.opts[ans]}\n\n`;
-    }
-  });
-
-  const retos = profile.challenges ? profile.challenges.map(ci => challengeTexts[ci]).join(' / ') : '';
-
-  try {
-    await emailjs.send('service_vcxtvj3', 'template_3fjaq03', {
-      nombre: name,
-      empresa: company || 'No indicada',
-      email: email,
-      whatsapp: phone || 'No indicado',
-      fecha: new Date().toLocaleDateString('es-MX', {day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}),
-      tamano: sizeLabels[profile.size] || profile.size || 'No indicado',
-      etapa: stageLabels[profile.stage] || profile.stage || 'No indicado',
-      equipo_rh: hrLabels[profile.hr] || profile.hr || 'No indicado',
-      retos: retos,
-      rol: roleLabels[profile.role] || profile.role || 'No indicado',
-      score_p1: pPcts[0]+'%', nivel_p1: nivelPilar(pPcts[0]),
-      score_p2: pPcts[1]+'%', nivel_p2: nivelPilar(pPcts[1]),
-      score_p3: pPcts[2]+'%', nivel_p3: nivelPilar(pPcts[2]),
-      score_p4: pPcts[3]+'%', nivel_p4: nivelPilar(pPcts[3]),
-      score_p5: pPcts[4]+'%', nivel_p5: nivelPilar(pPcts[4]),
-      score_general: overall+'%',
-      nivel_general: nivelGeneral,
-      respuestas_detalle: respuestasDetalle
-    });
-    console.log('EmailJS: enviado OK');
-  } catch(e) { console.log('EmailJS error:', e); }
-}
-
 async function submitLeadAndShowResults() {
   const name = document.getElementById('leadName').value.trim();
   const email = document.getElementById('leadEmail').value.trim();
@@ -906,7 +847,6 @@ async function submitLeadAndShowResults() {
       })
     });
   } catch(e) {}
-  await sendEmailJS(name, email, company, phone);
   document.getElementById('leadSection').style.display = 'none';
   document.getElementById('resultsSection').style.display = 'block';
   setStep(3);
