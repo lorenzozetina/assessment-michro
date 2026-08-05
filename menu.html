@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi-CHRO · Menú para el CEO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,700;1,300;1,500;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --v:#2D6A4F;--vd:#1B4332;--vm:#085041;
+    --a:#52B788;--al:#D8F3DC;
+    --t:#1A1A18;--t2:#4A4A48;--t3:#888;
+    --f:#F9F7F4;--w:#FFFFFF;
+    --b:rgba(45,106,79,0.12);
+  }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'DM Sans',sans-serif;color:var(--t);line-height:1.55;
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(82,183,136,.10), transparent 60%),
+      radial-gradient(900px 500px at -5% 110%, rgba(27,67,50,.06), transparent 55%),
+      var(--f);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:108px 28px 0}
+
+  /* NAV — igual al de index.html */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5%;height:68px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--b)}
+  .nav-logo a{display:flex;align-items:center;gap:2px;text-decoration:none;font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:var(--t)}
+  .nav-logo .mi{color:var(--v)}
+  .nav-links{display:flex;gap:24px;align-items:center}
+  .nav-links a{font-size:13px;font-weight:500;color:var(--t2);text-decoration:none;transition:color .2s}
+  .nav-links a:hover{color:var(--v)}
+  .nav-cta{background:var(--v)!important;color:#fff!important;padding:10px 22px;border-radius:6px;font-size:13px!important;transition:background .2s!important}
+  .nav-cta:hover{background:var(--vm)!important}
+  @media(max-width:900px){.nav-links a:not(.nav-cta):not(.nav-back){display:none}}
+
+  /* HEADER + CO-BRAND */
+  header{padding:0 0 30px}
+  .pill{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--v)}
+  .nucleo{font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:clamp(21px,3.6vw,31px);color:var(--vd);margin-top:14px;max-width:720px;line-height:1.3}
+  .intro{margin-top:14px;color:var(--t2);max-width:640px;font-size:15.5px}
+  .intro b{color:var(--t)}
+
+  /* PAYBACK BAND */
+  .payback{margin-top:30px;background:var(--w);border:1px solid var(--b);border-radius:18px;padding:26px 26px 22px;box-shadow:0 8px 28px rgba(45,106,79,.05)}
+  .payback .ph{font-family:'Fraunces',serif;font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--v);margin-bottom:18px}
+  .ptiles{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .ptile{position:relative;padding-left:18px}
+  .ptile::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:4px;border-radius:4px;background:var(--a)}
+  .ptile h4{font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--vd);line-height:1.25}
+  .ptile p{color:var(--t2);font-size:13.5px;margin-top:6px}
+  .pfoot{margin-top:18px;padding-top:16px;border-top:1px dashed var(--b);font-size:13.5px;color:var(--t2)}
+  .pfoot b{color:var(--vd)}
+  .pfoot a{color:var(--v);font-weight:600;text-decoration:none}
+  .pfoot a:hover{text-decoration:underline}
+
+  /* SIZE SELECTOR */
+  .selector{margin:36px 0 4px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .selector .lbl{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--t2)}
+  .seg{display:inline-flex;background:var(--w);border:1px solid var(--b);border-radius:100px;padding:4px;box-shadow:0 1px 2px rgba(45,106,79,.04)}
+  .seg button{border:0;background:transparent;cursor:pointer;font-family:inherit;padding:9px 20px;border-radius:100px;font-size:14px;font-weight:600;color:var(--t2);transition:all .22s ease}
+  .seg button .sz{display:block;font-size:10.5px;font-weight:500;letter-spacing:.04em;opacity:.7;margin-top:1px}
+  .seg button[aria-pressed="true"]{background:var(--vd);color:#fff}
+
+  /* SECTION TITLES */
+  .sectitle{font-family:'Fraunces',serif;font-weight:600;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--v);margin:50px 0 4px;display:flex;align-items:center;gap:12px}
+  .sectitle::after{content:"";flex:1;height:1px;background:var(--b)}
+  .sechelp{color:var(--t2);font-size:14.5px;margin-bottom:20px;max-width:660px}
+
+  /* ENTRY */
+  .entry{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .card{background:var(--w);border:1px solid var(--b);border-radius:16px;padding:26px;position:relative;transition:transform .25s ease,box-shadow .25s ease}
+  .card:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(45,106,79,.10)}
+  .card .tagline{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--a)}
+  .card h3{font-family:'Fraunces',serif;font-size:21px;font-weight:600;color:var(--vd);margin:8px 0 6px}
+  .card .gloss{font-size:13px;color:var(--t2);font-style:italic;margin-bottom:8px}
+  .card p{color:var(--t2);font-size:14.5px}
+  .card .price{margin-top:16px;font-family:'Fraunces',serif;font-size:25px;font-weight:600;color:var(--t)}
+  .card .price small{font-family:'DM Sans';font-size:13px;font-weight:500;color:var(--t2)}
+  .badge-free{display:inline-block;background:var(--al);color:var(--vd);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 11px;border-radius:100px;margin-top:16px}
+  .card.lead{background:linear-gradient(160deg,var(--vd),#163a2a);border-color:var(--vd)}
+  .card.lead .tagline{color:var(--a)}
+  .card.lead h3{color:#fff}
+  .card.lead .gloss{color:rgba(255,255,255,.6)}
+  .card.lead p{color:rgba(255,255,255,.74)}
+  .card .note{color:var(--t2);font-size:12.5px;margin-top:10px;font-style:italic}
+
+  /* SERVICES */
+  .services{margin-top:6px;border:1px solid var(--b);border-radius:16px;overflow:hidden;background:var(--w)}
+  .srow{display:grid;grid-template-columns:1fr auto;align-items:center;gap:18px;padding:18px 24px;border-bottom:1px solid var(--b);transition:background .2s ease}
+  .srow:last-child{border-bottom:0}
+  .srow:hover{background:var(--f)}
+  .sname{display:flex;flex-direction:column}
+  .codeline{display:flex;align-items:center;gap:9px;margin-bottom:3px}
+  .code{font-size:10.5px;font-weight:800;letter-spacing:.06em;color:var(--v);background:var(--al);padding:2px 8px;border-radius:6px}
+  .sname strong{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--vd);line-height:1.2}
+  .sname .out{color:var(--t2);font-size:13.5px;margin-top:4px;max-width:580px}
+  .sname .out::before{content:"→ ";color:var(--a);font-weight:700}
+  .sprice{font-family:'Fraunces',serif;font-weight:600;font-size:21px;color:var(--t);white-space:nowrap;text-align:right}
+  .sprice small{font-family:'DM Sans';font-size:12px;font-weight:500;color:var(--t2);display:block}
+
+  /* RETAINER */
+  .retainer{margin-top:8px;background:linear-gradient(155deg,var(--vd),#0f2c20);border-radius:20px;padding:38px;color:#fff;position:relative;overflow:hidden}
+  .retainer::before{content:"";position:absolute;inset:0;background:radial-gradient(500px 260px at 90% 0%,rgba(82,183,136,.22),transparent 60%)}
+  .retainer .inner{position:relative}
+  .retainer .kicker{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--a)}
+  .retainer h3{font-family:'Fraunces',serif;font-size:26px;font-weight:600;margin:8px 0 6px}
+  .retainer p{color:rgba(255,255,255,.78);max-width:580px;font-size:15px}
+  .retainer .humand{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:13px;color:rgba(255,255,255,.85)}
+  .retainer .humand b{color:var(--a)}
+  .retainer .rprice{margin-top:22px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .retainer .rprice .big{font-family:'Fraunces',serif;font-size:33px;font-weight:700}
+  .retainer .rprice .lbl{font-size:13px;color:rgba(255,255,255,.65)}
+  .retainer .variable{margin-top:12px;font-size:13px;color:rgba(255,255,255,.72)}
+  .retainer .variable b{color:#fff}
+
+  .back-cta{display:block;text-align:center;margin:44px 0 0;background:var(--v);color:#fff;padding:16px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;transition:background .2s}
+  .back-cta:hover{background:var(--vm)}
+
+  /* FOOTER */
+  footer{margin:24px 0 0;padding:32px 5% 48px;color:rgba(255,255,255,.45);font-size:12.5px;line-height:1.6;background:var(--vd);text-align:center}
+  footer .sizes{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;margin-bottom:12px}
+  footer .sizes div b{color:#fff;font-family:'Fraunces',serif}
+  footer .fine{opacity:.85}
+  footer a{color:rgba(255,255,255,.7)}
+
+  .reveal{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+
+  @media(max-width:780px){
+    .ptiles{grid-template-columns:1fr}
+    .entry{grid-template-columns:1fr}
+    .srow{grid-template-columns:1fr;align-items:flex-start;gap:8px}
+    .sprice{text-align:left}
+    .wrap{padding:98px 20px 0}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <a href="./index.html"><span class="mi">Mi-</span>CHRO</a>
+  </div>
+  <div class="nav-links">
+    <a href="./index.html" class="nav-back">← Volver al sitio</a>
+    <a href="./cotizador.html">Cotizador</a>
+    <a href="./caso-resultados.html">Caso Flecha</a>
+    <a href="./assessment.html" class="nav-cta" target="_blank">Diagnóstico gratuito</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header class="reveal">
+    <div class="pill">People-Powered Success · Menú de servicios</div>
+    <div class="nucleo">Tu Director de Recursos Humanos estratégico — sin el costo de tenerlo en nómina.</div>
+    <p class="intro">Para el <b>dueño o CEO</b> que quiere que su gente jale hacia los resultados del negocio. Hablamos tu idioma — el del negocio, no el de RH. Nos especializamos en la <b>estrategia de personas</b> que mueve los números.</p>
+
+    <div class="payback">
+      <div class="ph">El payback, en lenguaje de dueño</div>
+      <div class="ptiles">
+        <div class="ptile">
+          <h4>Te ahorras el costo de un CHRO de planta</h4>
+          <p>Tienes el criterio de un Director de RH senior, sin su sueldo, prestaciones ni carga social en tu nómina.</p>
+        </div>
+        <div class="ptile">
+          <h4>Frenas la fuga de dinero por rotación</h4>
+          <p>Cada salida cuesta meses de sueldo en reemplazo, capacitación y productividad perdida. Bajar rotación impacta directo tu EBITDA.</p>
+        </div>
+        <div class="ptile">
+          <h4>Resultados desde el día 1</h4>
+          <p>Quick wins en el corto plazo + un roadmap de mediano y largo plazo, con números que tú puedes seguir.</p>
+        </div>
+      </div>
+      <div class="pfoot">El <a href="./cotizador.html">cotizador</a> te calcula, para tu empresa, cuánto ahorras desde el primer mes — en pesos, no en teoría.</div>
+    </div>
+
+    <div class="selector">
+      <span class="lbl">Tamaño de empresa</span>
+      <div class="seg" role="group" aria-label="Tamaño de empresa">
+        <button data-size="0" aria-pressed="true">Micro<span class="sz">1–49</span></button>
+        <button data-size="1" aria-pressed="false">Pequeña<span class="sz">50–199</span></button>
+        <button data-size="2" aria-pressed="false">Mediana<span class="sz">200–500</span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ENTRADA -->
+  <div class="sectitle reveal" style="animation-delay:.05s">Por dónde empezamos</div>
+  <p class="sechelp reveal" style="animation-delay:.05s">Un primer vistazo de bajo roce: en minutos sabes dónde estás parado y qué te está costando dinero.</p>
+  <div class="entry">
+    <div class="card lead reveal" style="animation-delay:.08s">
+      <div class="tagline">Mi-Score · Assessment Express</div>
+      <h3>Tu calificación de RH en 10 minutos</h3>
+      <div class="gloss">(autodiagnóstico exprés, sin compromiso)</div>
+      <p>Respondes unas preguntas y ves al instante tu nivel de madurez y las brechas que más te están pegando.</p>
+      <div class="badge-free">Gratis</div>
+    </div>
+    <div class="card reveal" style="animation-delay:.12s">
+      <div class="tagline">Diagnóstico Profundo</div>
+      <h3>La radiografía a fondo</h3>
+      <div class="gloss">(dónde se te está yendo el dinero por mala gestión de gente)</div>
+      <p>Evaluación completa de tu función de RH, con el plan de quick wins y las prioridades para corregir.</p>
+      <div class="price"><span data-svc="diag">$18,000</span> <small>MXN + IVA</small></div>
+      <div class="note">Se condona al 100% si contratas el acompañamiento dentro de 30 días.</div>
+    </div>
+  </div>
+
+  <!-- SERVICIOS -->
+  <div class="sectitle reveal" style="animation-delay:.05s">Servicios à la carte</div>
+  <p class="sechelp reveal" style="animation-delay:.05s">Contrata sólo lo que necesitas, cuando lo necesitas. Precios para <strong id="sizeName">empresa Micro</strong>.</p>
+
+  <div class="services reveal" style="animation-delay:.08s">
+    <div class="srow">
+      <div class="sname">
+        <div class="codeline"><span class="code">Mi-PE</span><strong>Tu plan de negocio, alineado con tu gente</strong></div>
+        <div class="out">Todos remando hacia la misma meta; dejas de desperdiciar energía y dinero en esfuerzos sueltos.</div>
+      </div>
+      <div class="sprice"><span data-svc="pe">$35,000</span><small>MXN + IVA</small></div>
+    </div>
+    <div class="srow">
+      <div class="sname">
+        <div class="codeline"><span class="code">Mi-GP</span><strong>Cómo administras a tu equipo, de punta a punta</strong></div>
+        <div class="out">Una radiografía completa que te dice exactamente qué arreglar primero para dejar de perder dinero.</div>
+      </div>
+      <div class="sprice"><span data-svc="gp">$28,000</span><small>MXN + IVA</small></div>
+    </div>
+    <div class="srow">
+      <div class="sname">
+        <div class="codeline"><span class="code">Plan Anual</span><strong>Tu plan de acción del año para la gente</strong></div>
+        <div class="out">Iniciativas con responsables y fechas. Dejas de improvisar con tu activo más caro.</div>
+      </div>
+      <div class="sprice"><span data-svc="plan">$22,000</span><small>MXN + IVA</small></div>
+    </div>
+    <div class="srow">
+      <div class="sname">
+        <div class="codeline"><span class="code">Onboarding</span><strong>Cómo recibes a los que entran</strong></div>
+        <div class="out">Que el nuevo produzca antes y no se te vaya en los primeros 90 días.</div>
+      </div>
+      <div class="sprice"><span data-svc="onb">$12,000</span><small>MXN + IVA</small></div>
+    </div>
+    <div class="srow">
+      <div class="sname">
+        <div class="codeline"><span class="code">Líderes</span><strong>Desarrollo de tus jefes</strong></div>
+        <div class="out">Jefes que retienen y sacan resultados, en vez de ahuyentar a tu mejor gente.</div>
+      </div>
+      <div class="sprice"><span data-svc="lid">$18,000</span><small>MXN + IVA</small></div>
+    </div>
+    <div class="srow">
+      <div class="sname">
+        <div class="codeline"><span class="code">Mi-GC</span><strong>Cómo lograr que los cambios sí peguen</strong></div>
+        <div class="out">Que tus proyectos de cambio se adopten de verdad y no se queden en una presentación.</div>
+      </div>
+      <div class="sprice"><span data-svc="gc">$15,000</span><small>MXN + IVA</small></div>
+    </div>
+    <div class="srow">
+      <div class="sname">
+        <div class="codeline"><span class="code">Compensación</span><strong>Cuánto y cómo pagas</strong></div>
+        <div class="out">Pagar lo justo para retener, sin inflar tu nómina de más.</div>
+      </div>
+      <div class="sprice"><span data-svc="comp">$20,000</span><small>MXN + IVA</small></div>
+    </div>
+    <div class="srow">
+      <div class="sname">
+        <div class="codeline"><span class="code">Cultura</span><strong>Por qué se te va la gente</strong></div>
+        <div class="out">Entender qué está pasando en tu cultura y qué hacer para que tu gente se quede.</div>
+      </div>
+      <div class="sprice"><span data-svc="cult">$18,000</span><small>MXN + IVA</small></div>
+    </div>
+  </div>
+
+  <!-- RETAINER -->
+  <div class="sectitle reveal" style="animation-delay:.05s">Todo incluido</div>
+  <div class="retainer reveal" style="animation-delay:.08s">
+    <div class="inner">
+      <div class="kicker">HR as a Service</div>
+      <h3>Tu CHRO estratégico de planta — por una fracción del costo</h3>
+      <p>Tienes a tu Director de RH ejecutando el plan mes a mes, contigo, sin pagar el sueldo, prestaciones y carga social de un ejecutivo senior.</p>
+      <div class="humand">▸ Incluye la plataforma <b>Humand</b> — la tecnología que automatiza y le da seguimiento a todo.</div>
+      <div class="rprice">
+        <span class="big" data-svc="ret">$20,000 – $30,000</span>
+        <span class="lbl">MXN / mes + IVA</span>
+      </div>
+      <div class="variable">+ <b>Fee variable</b> ligado a resultados sostenidos (p. ej. rotación a la baja). Compromiso mínimo 6–12 meses.</div>
+    </div>
+  </div>
+
+  <a href="./index.html#contacto" class="back-cta">¿Hablamos de tu caso? Escríbenos →</a>
+
+</div>
+
+<footer class="reveal" style="animation-delay:.05s">
+  <div class="sizes">
+    <div><b>Micro</b> · 1–49 colaboradores</div>
+    <div><b>Pequeña</b> · 50–199 colaboradores</div>
+    <div><b>Mediana</b> · 200–500 colaboradores</div>
+  </div>
+  <div class="fine">Precios en pesos mexicanos (MXN), más IVA. Mi-CHRO no ofrece nómina ni reclutamiento directo — esos servicios van con nuestros aliados. Vigencia v5. · <a href="./index.html">Volver al sitio</a></div>
+</footer>
+
+<script>
+  var P = {
+    diag:["$18,000","$32,000","$55,000"],
+    pe:["$35,000","$60,000","$95,000"],
+    gp:["$28,000","$50,000","$80,000"],
+    plan:["$22,000","$38,000","$65,000"],
+    onb:["$12,000","$22,000","$38,000"],
+    lid:["$18,000","$32,000","$55,000"],
+    gc:["$15,000","$28,000","$48,000"],
+    comp:["$20,000","$35,000","$60,000"],
+    cult:["$18,000","$32,000","$55,000"],
+    ret:["$20,000 – $30,000","$35,000 – $55,000","$60,000 – $100,000"]
+  };
+  var NAMES = ["empresa Micro","empresa Pequeña","empresa Mediana"];
+  function setSize(i){
+    Object.keys(P).forEach(function(k){
+      var el=document.querySelector('[data-svc="'+k+'"]');
+      if(el) el.textContent=P[k][i];
+    });
+    document.getElementById('sizeName').textContent=NAMES[i];
+    document.querySelectorAll('.seg button').forEach(function(b){
+      b.setAttribute('aria-pressed', (+b.dataset.size===i)?'true':'false');
+    });
+  }
+  document.querySelectorAll('.seg button').forEach(function(b){
+    b.addEventListener('click', function(){ setSize(+b.dataset.size); });
+  });
+  setSize(0);
+</script>
+</body>
+</html>

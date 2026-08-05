@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotizador · Mi-CHRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,700;1,300;1,500;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --v:#2D6A4F;--vd:#1B4332;--vm:#085041;
+    --a:#52B788;--al:#D8F3DC;
+    --t:#1A1A18;--t2:#4A4A48;--t3:#888;
+    --f:#F9F7F4;--w:#FFFFFF;
+    --b:rgba(45,106,79,0.12);
+    --red:#C8102E;
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:'DM Sans',sans-serif;color:var(--t);line-height:1.55;-webkit-font-smoothing:antialiased;
+    background:radial-gradient(1200px 600px at 85% -10%,rgba(82,183,136,.10),transparent 60%),radial-gradient(900px 500px at -5% 110%,rgba(27,67,50,.06),transparent 55%),var(--f)}
+  .wrap{max-width:1000px;margin:0 auto;padding:108px 28px 0}
+
+  /* NAV — igual al de index.html */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5%;height:68px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--b)}
+  .nav-logo a{display:flex;align-items:center;gap:2px;text-decoration:none;font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:var(--t)}
+  .nav-logo .mi{color:var(--v)}
+  .nav-links{display:flex;gap:24px;align-items:center}
+  .nav-links a{font-size:13px;font-weight:500;color:var(--t2);text-decoration:none;transition:color .2s}
+  .nav-links a:hover{color:var(--v)}
+  .nav-cta{background:var(--v)!important;color:#fff!important;padding:10px 22px;border-radius:6px;font-size:13px!important;transition:background .2s!important}
+  .nav-cta:hover{background:var(--vm)!important}
+  @media(max-width:900px){.nav-links a:not(.nav-cta):not(.nav-back){display:none}}
+
+  header{padding:0 0 26px}
+  .pill{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--v)}
+  h1{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(24px,4vw,34px);color:var(--t);margin-top:14px;line-height:1.2}
+  .sub{margin-top:10px;color:var(--t2);max-width:620px;font-size:15.5px}
+
+  .inputs{margin-top:28px;background:var(--w);border:1px solid var(--b);border-radius:18px;padding:26px;box-shadow:0 8px 28px rgba(45,106,79,.05)}
+  .inh{font-family:'Fraunces',serif;font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--v);margin-bottom:18px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  .fld label{display:block;font-size:13px;font-weight:600;color:var(--t);margin-bottom:7px}
+  .fld label small{display:block;font-weight:500;color:var(--t2);font-size:11.5px;margin-top:2px}
+  .inputbox{position:relative}
+  .inputbox .pre{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t2);font-weight:600;font-size:15px}
+  .inputbox .post{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--t2);font-weight:600;font-size:15px}
+  input[type=number],select{width:100%;border:1.5px solid var(--b);border-radius:11px;padding:13px 16px;font-family:inherit;font-size:16px;font-weight:600;color:var(--t);background:var(--w);transition:border-color .2s;-webkit-appearance:none;appearance:none}
+  select{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234A4A48' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+  input.pad-l{padding-left:30px}
+  input.pad-r{padding-right:40px}
+  input:focus,select:focus{outline:none;border-color:var(--v)}
+  .row2{margin-top:20px}
+  .sizetag{margin-top:16px;font-size:13px;color:var(--t2)}
+  .sizetag b{color:var(--vd);font-family:'Fraunces',serif}
+
+  .panel{margin-top:24px}
+  .pain{background:linear-gradient(155deg,#2a1414,#3a1a1a);border-radius:18px;padding:30px;color:#fff;position:relative;overflow:hidden}
+  .pain::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 220px at 92% 0%,rgba(200,16,46,.28),transparent 60%)}
+  .pain .inner{position:relative}
+  .pain .k{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#ff8a8a}
+  .pain h2{font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin:8px 0 4px;color:#fff}
+  .bignum{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(34px,6vw,52px);line-height:1;margin:10px 0 4px;color:#fff}
+  .bignum span{font-size:18px;color:rgba(255,255,255,.6);font-weight:500}
+  .pain .detail{color:rgba(255,255,255,.75);font-size:14px;margin-top:8px}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  .cbox{background:var(--w);border:1px solid var(--b);border-radius:16px;padding:24px}
+  .cbox .k{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t2)}
+  .cbox h3{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--vd);margin:6px 0 10px;line-height:1.25}
+  .cbox .amt{font-family:'Fraunces',serif;font-weight:700;font-size:30px;color:var(--t);line-height:1}
+  .cbox .amt small{font-size:14px;color:var(--t2);font-weight:500}
+  .cbox.win{background:linear-gradient(155deg,var(--vd),#0f2c20);border-color:var(--vd)}
+  .cbox.win .k{color:var(--a)}
+  .cbox.win h3{color:#fff}
+  .cbox.win .amt{color:#fff}
+  .cbox.win .amt small{color:rgba(255,255,255,.6)}
+  .cbox.win .frac{display:inline-block;margin-top:10px;background:rgba(82,183,136,.18);color:var(--a);font-size:12px;font-weight:700;padding:5px 12px;border-radius:100px}
+
+  .verdict{margin-top:16px;background:var(--al);border:1px solid #bfe6cb;border-radius:16px;padding:26px;text-align:center}
+  .verdict .k{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--vd);opacity:.7}
+  .verdict .big{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(30px,6vw,48px);color:var(--vd);line-height:1;margin:8px 0}
+  .verdict p{color:var(--t);font-size:14px;max-width:600px;margin:6px auto 0}
+
+  .chro{margin-top:24px;background:var(--w);border:1px solid var(--b);border-radius:18px;padding:28px}
+  .chro h3{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--vd);margin-bottom:12px}
+  .chro ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;margin:6px 0 16px}
+  .chro li{position:relative;padding-left:22px;color:var(--t2);font-size:14px}
+  .chro li::before{content:"✕";position:absolute;left:0;top:1px;color:var(--red);font-weight:800;font-size:12px}
+  .chro .turn{border-top:1px dashed var(--b);padding-top:16px;font-size:15px;color:var(--t)}
+  .chro .turn b{color:var(--vd)}
+
+  details{margin-top:22px;background:var(--w);border:1px solid var(--b);border-radius:14px;padding:6px 20px}
+  summary{cursor:pointer;font-weight:600;font-size:13.5px;color:var(--t2);padding:12px 0;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary.gear::before{content:"⚙ ";color:var(--a)}
+  summary.book::before{content:"📚 ";}
+  .asgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;padding:8px 0 18px}
+  .asgrid .fld label{font-size:12.5px}
+  .sources{padding:6px 0 18px;font-size:12.5px;color:var(--t2);line-height:1.7}
+  .sources b{color:var(--vd)}
+
+  .back-cta{display:block;text-align:center;margin:36px 0 0;background:var(--v);color:#fff;padding:16px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;transition:background .2s}
+  .back-cta:hover{background:var(--vm)}
+
+  footer{margin:24px 0 0;padding:40px 5% 48px;color:rgba(255,255,255,0.45);font-size:12.5px;line-height:1.6;text-align:center;background:var(--vd);max-width:none}
+  footer b{color:rgba(255,255,255,0.7)}
+
+  @media(max-width:760px){.grid,.asgrid{grid-template-columns:1fr}.compare{grid-template-columns:1fr}.chro ul{grid-template-columns:1fr}.wrap{padding:98px 20px 0}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <a href="./index.html"><span class="mi">Mi-</span>CHRO</a>
+  </div>
+  <div class="nav-links">
+    <a href="./index.html" class="nav-back">← Volver al sitio</a>
+    <a href="./menu.html">Menú completo</a>
+    <a href="./caso-resultados.html">Caso Flecha</a>
+    <a href="./assessment.html" class="nav-cta" target="_blank">Diagnóstico gratuito</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header>
+    <div class="pill">People-Powered Success · Cotizador</div>
+    <h1>¿Cuánto te está costando no tener una estrategia de personas?</h1>
+    <p class="sub">Pon tus números. En segundos ves qué te cuesta hoy tu rotación — y cuánto recuperas con tu CHRO estratégico, sin tenerlo en nómina. Cifras basadas en estudios de mercado, con el supuesto más conservador.</p>
+  </header>
+
+  <div class="inputs">
+    <div class="inh">Tus números</div>
+    <div class="grid">
+      <div class="fld">
+        <label>Tu industria<small>arranca con la rotación típica del sector</small></label>
+        <select id="ind">
+          <option value="17">Promedio nacional</option>
+          <option value="35" selected>Comercio / Retail</option>
+          <option value="28">Manufactura / Industrial</option>
+          <option value="45">Alimentos, bebidas y restaurantes</option>
+          <option value="45">Hotelería y turismo</option>
+          <option value="35">Logística y transporte</option>
+          <option value="32">Tecnología / Fintech</option>
+          <option value="18">Banca, seguros y financiero</option>
+          <option value="20">Otra / No estoy seguro</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label>Colaboradores<small>cuánta gente tienes</small></label>
+        <div class="inputbox"><input type="number" id="emp" class="pad-r" value="150" min="1"><span class="post">pers</span></div>
+      </div>
+    </div>
+    <div class="grid row2">
+      <div class="fld">
+        <label>Rotación anual<small>% de tu gente que se va al año — ajústalo a tu realidad</small></label>
+        <div class="inputbox"><input type="number" id="rot" class="pad-r" value="35" min="0" max="300"><span class="post">%</span></div>
+      </div>
+      <div class="fld">
+        <label>Sueldo promedio<small>mensual, por colaborador</small></label>
+        <div class="inputbox"><span class="pre">$</span><input type="number" id="sal" class="pad-l" value="15000" min="0"></div>
+      </div>
+    </div>
+    <div class="sizetag">Tu empresa entra en perfil <b id="sizeName">Pequeña</b> · <span id="exits">—</span> salidas al año con esa rotación.</div>
+  </div>
+
+  <div class="panel">
+    <div class="pain">
+      <div class="inner">
+        <div class="k">Lo que te cuesta hoy · sin hacer nada</div>
+        <h2>Tu rotación, traducida a pesos</h2>
+        <div class="bignum" id="painNum">$0 <span>/ año</span></div>
+        <div class="detail" id="painDetail"></div>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="cbox">
+        <div class="k">Opción A · CHRO de planta</div>
+        <h3>Contratar un Director de RH senior</h3>
+        <div class="amt" id="chroAmt">$0 <small>/ año</small></div>
+      </div>
+      <div class="cbox win">
+        <div class="k">Opción B · Mi-CHRO</div>
+        <h3>El mismo criterio, sin la nómina</h3>
+        <div class="amt" id="retAmt">$0 <small>/ año</small></div>
+        <div class="frac" id="fracTag">—</div>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <div class="k">Lo que recuperas al bajar tu rotación</div>
+      <div class="big" id="recoverNum">$0</div>
+      <p id="recoverP"></p>
+    </div>
+  </div>
+
+  <div class="chro">
+    <h3>¿Y si no puedes pagar un CHRO de planta?</h3>
+    <p style="color:var(--t2);font-size:14.5px;margin-bottom:14px">La mayoría de las PYMEs no puede justificar un Director de RH senior de tiempo completo. El problema es que el costo de <em>no tenerlo</em> no aparece en una factura — aparece en tu EBITDA:</p>
+    <ul>
+      <li>Rotación que no para y nadie sabe por qué</li>
+      <li>Contrataciones a ciegas, sin método</li>
+      <li>Líderes que ahuyentan al buen talento</li>
+      <li>Cero plan: las decisiones de gente se toman por corazonada</li>
+      <li>Tu equipo de RH atrapado en lo operativo</li>
+      <li>Cambios que se anuncian y nunca se adoptan</li>
+    </ul>
+    <div class="turn"><b>Ahí entra Mi-CHRO:</b> te damos el criterio estratégico de un CHRO senior, ejecutando un plan con quick wins desde el día 1 — por una fracción del costo de tenerlo en tu nómina.</div>
+  </div>
+
+  <details>
+    <summary class="gear">Supuestos del cálculo (ajustables y transparentes)</summary>
+    <div class="asgrid">
+      <div class="fld">
+        <label>Tipo de puesto predominante<small>define el costo por salida (% del sueldo anual)</small></label>
+        <select id="puesto">
+          <option value="16" selected>Operativo / primera línea — 16%</option>
+          <option value="50">Administrativo / mando medio — 50%</option>
+          <option value="100">Profesional / especializado — 100%</option>
+          <option value="150">Director / ejecutivo — 150%</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label>Costo por salida<small>% del sueldo anual (editable)</small></label>
+        <div class="inputbox"><input type="number" id="pctSalida" class="pad-r" value="16" min="0" max="300"><span class="post">%</span></div>
+      </div>
+      <div class="fld">
+        <label>Sueldo CHRO de planta<small>mensual, base de mercado (cargado ≈ $250k)</small></label>
+        <div class="inputbox"><span class="pre">$</span><input type="number" id="chroMes" class="pad-l" value="184000" min="0"></div>
+      </div>
+      <div class="fld">
+        <label>Meta de reducción de rotación<small>ilustrativa, para el retorno</small></label>
+        <div class="inputbox"><input type="number" id="redux" class="pad-r" value="50" min="0" max="100"><span class="post">%</span></div>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary class="book">Fuentes y metodología</summary>
+    <div class="sources">
+      <p><b>Costo por salida (el más conservador).</b> El Center for American Progress midió el costo de rotación por nivel salarial: 16% del sueldo anual en puestos de menos de $30,000 al año, 20% en los de menos de $50,000, y 21% como mediana general. Por eso el operativo de primera línea se calcula al 16% — el piso documentado. En puestos especializados y de liderazgo sube a 100–150%, y en ejecutivos hasta 213%. SHRM y Gallup ubican el rango amplio entre 50% y 200% (≈6–9 meses de sueldo) incluyendo puestos más calificados.</p>
+      <p><b>Rotación por industria.</b> Promedio nacional de 17% (AMEDIRH) a 24.5% (OCDE). Comercio, manufactura y tecnología registran las cifras más altas; alimentos y bebidas, retail, hotelería, turismo y logística son los más golpeados (hasta ~50%); banca y seguros, más bajos. Fuentes: AMEDIRH, OCDE, ManpowerGroup, INEGI (ENOE).</p>
+      <p><b>Sueldo del CHRO.</b> Michael Page reporta ~$183,750 MXN mensuales para un Director de RH en empresa mediana (bruto, sin bonos ni prestaciones); cargado con prestaciones y carga social ronda los $250,000.</p>
+      <p style="opacity:.8">Todas las cifras son referencias de mercado, ajustables a tu realidad. Esta herramienta es ilustrativa y no constituye una propuesta formal ni garantía de resultados.</p>
+    </div>
+  </details>
+
+  <a href="./index.html#contacto" class="back-cta">¿Hablamos de tu caso? Escríbenos →</a>
+
+</div>
+
+<footer>
+  © 2025 Mi-CHRO · Consultoría en Estrategia Empresarial y Gestión de Personas · <b><a href="./index.html" style="color:inherit">Volver al sitio</a></b>
+</footer>
+
+<script>
+  var R = {micro:25000, pequena:45000, mediana:80000}; // retainer mensual medio por perfil
+  function mxn(n){ return '$' + Math.round(n).toLocaleString('es-MX'); }
+
+  document.getElementById('ind').addEventListener('change', function(){
+    document.getElementById('rot').value = this.value; calc();
+  });
+  document.getElementById('puesto').addEventListener('change', function(){
+    document.getElementById('pctSalida').value = this.value; calc();
+  });
+
+  function calc(){
+    var emp = +document.getElementById('emp').value || 0;
+    var rot = +document.getElementById('rot').value || 0;
+    var sal = +document.getElementById('sal').value || 0;
+    var pct = +document.getElementById('pctSalida').value || 0;
+    var chroMes = +document.getElementById('chroMes').value || 0;
+    var redux = +document.getElementById('redux').value || 0;
+
+    var perfil, retMes;
+    if(emp <= 49){ perfil='Micro'; retMes=R.micro; }
+    else if(emp <= 199){ perfil='Pequeña'; retMes=R.pequena; }
+    else { perfil='Mediana'; retMes=R.mediana; }
+
+    var salidas = emp * (rot/100);
+    var sueldoAnual = sal * 12;
+    var costoPorSalida = (pct/100) * sueldoAnual;
+    var costoRotacion = salidas * costoPorSalida;
+    var chroAnual = chroMes * 12;
+    var retAnual = retMes * 12;
+    var recuperacion = costoRotacion * (redux/100);
+
+    document.getElementById('sizeName').textContent = perfil;
+    document.getElementById('exits').textContent = (Math.round(salidas*10)/10).toLocaleString('es-MX');
+
+    document.getElementById('painNum').innerHTML = mxn(costoRotacion) + ' <span>/ año</span>';
+    document.getElementById('painDetail').textContent =
+      (Math.round(salidas*10)/10).toLocaleString('es-MX') + ' salidas al año, a ' + pct +
+      '% del sueldo anual cada una. Es dinero que ya estás perdiendo, todos los años.';
+
+    document.getElementById('chroAmt').innerHTML = mxn(chroAnual) + ' <small>/ año</small>';
+    document.getElementById('retAmt').innerHTML = mxn(retAnual) + ' <small>/ año</small>';
+
+    var frac = chroAnual>0 ? Math.round((retAnual/chroAnual)*100) : 0;
+    document.getElementById('fracTag').textContent = frac>0 ? ('≈ ' + frac + '% del costo de un CHRO de planta') : '—';
+
+    document.getElementById('recoverNum').textContent = mxn(recuperacion);
+    document.getElementById('recoverP').textContent =
+      'Bajando tu rotación ' + redux + '%, recuperas ' + mxn(recuperacion) +
+      ' al año — solo por este concepto. Tu inversión en Mi-CHRO (' + mxn(retAnual) +
+      '/año) es apenas el ' + frac + '% de lo que cuesta un CHRO de planta, y el efecto se acumula año con año.';
+  }
+
+  document.querySelectorAll('input').forEach(function(i){ i.addEventListener('input', calc); });
+  calc();
+</script>
+</body>
+</html>

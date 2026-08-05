@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomía de una propuesta · Mi-CHRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,700;1,300;1,500;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --v:#2D6A4F;--vd:#1B4332;--vm:#085041;
+    --a:#52B788;--al:#D8F3DC;
+    --t:#1A1A18;--t2:#4A4A48;--t3:#888;
+    --f:#F9F7F4;--w:#FFFFFF;
+    --b:rgba(45,106,79,0.12);
+  }
+  body{font-family:'DM Sans',sans-serif;color:var(--t);line-height:1.6;-webkit-font-smoothing:antialiased;
+    background:radial-gradient(1200px 600px at 85% -10%,rgba(82,183,136,.10),transparent 60%),radial-gradient(900px 500px at -5% 110%,rgba(27,67,50,.06),transparent 55%),var(--f)}
+  .wrap{max-width:920px;margin:0 auto;padding:0 28px}
+
+  /* nav ligero — esta página no es pública, es para compartir 1:1 */
+  .backbar{padding:20px 28px 0;max-width:920px;margin:0 auto}
+  .backbar a{font-size:13px;font-weight:600;color:var(--v);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .backbar a:hover{color:var(--vm)}
+
+  header{padding:26px 0 26px;border-bottom:1px solid var(--b)}
+  .pill{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--v)}
+  h1{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(25px,4vw,36px);color:var(--t);margin-top:14px;line-height:1.18}
+  .sub{margin-top:12px;color:var(--t2);max-width:680px;font-size:15.5px}
+
+  .lead{margin-top:26px;background:linear-gradient(155deg,var(--vd),#0f2c20);border-radius:18px;padding:28px 30px;color:#fff;position:relative;overflow:hidden}
+  .lead::before{content:"";position:absolute;inset:0;background:radial-gradient(460px 240px at 92% 0%,rgba(82,183,136,.22),transparent 60%)}
+  .lead .inner{position:relative}
+  .lead p{font-size:16px;color:rgba(255,255,255,.88);max-width:660px}
+  .lead p b{color:#fff}
+  .lead .case{margin-top:14px;font-size:13.5px;color:rgba(255,255,255,.66);font-style:italic;border-top:1px dashed rgba(255,255,255,.2);padding-top:14px}
+
+  .phase{margin:40px 0 0}
+  .phasehead{font-family:'Fraunces',serif;font-weight:600;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--v);display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .phasehead::after{content:"";flex:1;height:1px;background:var(--b)}
+
+  .step{display:grid;grid-template-columns:42px 1fr;gap:18px;padding:16px 0;border-bottom:1px solid var(--b)}
+  .step:last-child{border-bottom:0}
+  .num{width:42px;height:42px;border-radius:11px;background:var(--al);color:var(--vd);font-family:'Fraunces',serif;font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center}
+  .step h3{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--vd);line-height:1.25}
+  .step p{color:var(--t2);font-size:14.5px;margin-top:5px}
+  .step .ex{margin-top:8px;font-size:13.5px;color:var(--t);background:var(--w);border:1px solid var(--b);border-left:3px solid var(--a);border-radius:0 10px 10px 0;padding:10px 14px}
+  .step .ex b{color:var(--vd)}
+
+  .closebox{margin:40px 0 0;background:var(--w);border:1px solid var(--b);border-radius:16px;padding:26px 28px}
+  .closebox h3{font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:var(--vd);margin-bottom:8px}
+  .closebox p{color:var(--t2);font-size:14.5px}
+  .closebox .note{margin-top:14px;padding-top:14px;border-top:1px dashed var(--b);font-size:13px;color:var(--t2);font-style:italic}
+
+  .back-cta{display:block;text-align:center;margin:40px 0 0;background:var(--v);color:#fff;padding:16px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;transition:background .2s}
+  .back-cta:hover{background:var(--vm)}
+
+  footer{margin:24px 0 0;padding:28px 5% 48px;color:rgba(255,255,255,.5);font-size:12.5px;line-height:1.7;background:var(--vd);text-align:center}
+  footer b{color:#fff}
+  footer a{color:rgba(255,255,255,.7)}
+
+  @media(max-width:640px){.wrap,.backbar{padding-left:20px;padding-right:20px}.step{grid-template-columns:36px 1fr;gap:14px}.num{width:36px;height:36px;font-size:15px}}
+</style>
+</head>
+<body>
+
+<div class="backbar"><a href="./index.html">← Mi-CHRO — Volver al sitio</a></div>
+
+<div class="wrap">
+
+  <header>
+    <div class="pill">People-Powered Success</div>
+    <h1>Anatomía de una propuesta Mi-CHRO</h1>
+    <p class="sub">Ejemplo de un caso real, anonimizado. Para que veas el nivel de lo que llevamos a un cliente — y por qué una propuesta nuestra no se parece a un catálogo de servicios de RH.</p>
+  </header>
+
+  <div class="lead">
+    <div class="inner">
+      <p>Una propuesta Mi-CHRO <b>no abre con servicios ni con precios</b>. Abre con el negocio del cliente. Primero entendemos cómo gana dinero, qué lo tiene atorado y qué papel juegan las personas en eso. Recién entonces proponemos. Así se ve, paso a paso.</p>
+      <div class="case">Caso ilustrativo: una consultora de tecnología B2B de ~40 personas, en un año de presión financiera, donde el dueño cargaba solo con los temas de personas — y eso le robaba el tiempo que necesitaba para vender.</div>
+    </div>
+  </div>
+
+  <!-- FASE 1 -->
+  <div class="phase">
+    <div class="phasehead">Primero · Entender antes de proponer</div>
+
+    <div class="step">
+      <div class="num">1</div>
+      <div>
+        <h3>Quiénes somos</h3>
+        <p>Credenciales y propuesta de valor, en una página. Suficiente para generar confianza, sin convertir la propuesta en un folleto sobre nosotros.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div>
+        <h3>Cómo trabajamos: entramos por el negocio, no por RH</h3>
+        <p>El reencuadre que lo cambia todo. No venimos a "arreglar Recursos Humanos"; venimos a mover los resultados del negocio a través de las personas.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div>
+        <h3>Las 6 preguntas para entender tu negocio</h3>
+        <p>Antes de recomendar nada, escuchamos. Seis preguntas que ponen el foco en el dinero y la estrategia, no en el organigrama.</p>
+        <div class="ex"><b>En el caso:</b> la pregunta guía fue "¿cómo sales del rojo este trimestre, y qué papel juegan las personas en esa recuperación?"</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">4</div>
+      <div>
+        <h3>El contexto del sector</h3>
+        <p>Investigación real de lo que está pasando en la industria del cliente hoy. Demuestra que hicimos la tarea y que hablamos su lenguaje.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">5</div>
+      <div>
+        <h3>FODA preliminar — a validar juntos</h3>
+        <p>Una primera lectura de fortalezas y riesgos, marcada explícitamente como preliminar. Invita a la conversación, no la cierra.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div class="phase">
+    <div class="phasehead">Después · El diagnóstico del reto</div>
+
+    <div class="step">
+      <div class="num">6</div>
+      <div>
+        <h3>El reto en 3 capas</h3>
+        <p>Ordenamos el problema en capas — del síntoma visible a la causa de fondo — para que el CEO vea que entendimos lo que realmente está pasando.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">7</div>
+      <div>
+        <h3>La IA como palanca</h3>
+        <p>Modelo tradicional vs. modelo con IA. Mostramos cómo la tecnología multiplica el resultado, no como adorno sino como ventaja concreta.</p>
+        <div class="ex"><b>En el caso:</b> el cliente ya usaba IA activamente; conectamos la estrategia de personas con esa palanca que ya tenían.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div class="phase">
+    <div class="phasehead">Entonces · La solución</div>
+
+    <div class="step">
+      <div class="num">8</div>
+      <div>
+        <h3>Metodología: Mi-PE + Mi-GP</h3>
+        <p>Recién aquí entran nuestros modelos: Planeación Estratégica con foco en personas y el Modelo Integral de Gestión de Personas. La metodología llega cuando el cliente ya entendió por qué la necesita.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">9</div>
+      <div>
+        <h3>Quick wins — sacar la cabeza del agua</h3>
+        <p>Resultados tangibles de corto plazo. El CEO necesita ver tracción rápida antes de creer en el plan de fondo.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">10</div>
+      <div>
+        <h3>Roadmap ilustrativo</h3>
+        <p>Un mapa de ruta de muestra — con la nota explícita de que el plan definitivo se construye con el cliente tras el diagnóstico, priorizando con una matriz de impacto-efecto.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">11</div>
+      <div>
+        <h3>Qué incluye el acompañamiento</h3>
+        <p>El día a día del servicio: cómo se ve trabajar con Mi-CHRO mes a mes, para que no quede ninguna duda de qué recibe.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CIERRE -->
+  <div class="closebox">
+    <h3>Y al final · El cierre</h3>
+    <p><b>La inversión</b> se presenta en dos opciones, para que el cliente elija nivel de involucramiento. <b>El equipo</b> que lo atendería, con nombres y trayectoria. <b>Referencias</b> verificables de clientes en sectores como energía, retail y servicios profesionales. Y los <b>próximos pasos</b>, con responsables y fechas claras.</p>
+    <div class="note">Nota: todo lo interno —márgenes, esquema de honorarios, costo de plataforma— nunca aparece en la propuesta del cliente. La propuesta habla el idioma del negocio del cliente, de principio a fin.</div>
+  </div>
+
+  <a href="./index.html#contacto" class="back-cta">¿Hablamos de tu propuesta? Escríbenos →</a>
+
+</div>
+
+<footer>
+  <b>Mi-CHRO</b> · People-Powered Success. Documento de ejemplo con fines ilustrativos; caso real anonimizado. Cifras y datos sensibles del cliente original han sido removidos.<br><br>
+  <a href="./index.html">Volver al sitio</a>
+</footer>
+
+</body>
+</html>
